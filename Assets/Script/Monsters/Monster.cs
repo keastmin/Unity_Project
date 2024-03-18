@@ -43,8 +43,5 @@ public class Monster
     }
 
     // 몬스터가 죽었을 시 동작하는 메소드
-    public void Die()
-    {
-
-    }
+    public void Die() { }
 }

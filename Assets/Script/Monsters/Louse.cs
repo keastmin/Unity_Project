@@ -36,7 +36,7 @@ class RedLouse : Monster
     // '몸 말기' 버프 사용
     public void UseShield()
     {
-        if (isUsingShieldOnce == false)
+        if (!isUsingShieldOnce)
         {
             isUsingShieldOnce = true;
             health += shield;
@@ -66,15 +66,15 @@ class GreenLouse : Monster
     // '몸 말기' 버프 사용
     public void UseShield()
     {
-        if (isUsingShieldOnce == false)
+        if (!isUsingShieldOnce)
         {
             isUsingShieldOnce = true;
             health += shield;
         }
     }
 
-    // '약화' 디버프 부여
-    public int UseWeakening(int playerAttackForce)
+    // '약화' 디버프 부여, 플레이어의 공격력을 매개변수로 받음.
+    public int GiveWeakening(int playerAttackForce)
     {
         return playerAttackForce = (int)(playerAttackForce * 0.75);
     }
