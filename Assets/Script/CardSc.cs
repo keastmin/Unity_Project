@@ -12,9 +12,9 @@ public class CardSc : MonoBehaviour
     public int block; // 방어량
 
 
-    public void Play() // 대상이 있는 카드를 사용할때 불러올 함수
+    public void Play() // 대상이 없는 카드를 사용할때 불러올 함수
     {
-        if (playerSc.energy > cost) // 플레이어의 energy가 cost 보다 크면
+        if (playerSc.energy >= cost) // 플레이어의 energy가 cost 보다 크면
         {
             playerSc.TakeEnergy(cost); // 플레이어의 energy를 cost만큼 줄이기
         }

@@ -1,12 +1,26 @@
+using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
+
+public enum BuffType
+{
+    Strength, // 힘 0
+    Poisoned, // 독 1
+    Vulnerable, // 취약 2
+    Dexterity //민첩 3
+    // 추가적인 버프와 디버프는 여기에 추가가능
+};
+
 
 public class PlayerSc : MonoBehaviour
 {
     //전투 변수들
     public int energy; // 에너지
     public int health; // 현재체력
-    public int maxHealth; // 최대체력
+    public int maxHealth = 100; // 최대체력
     public int block; // 방어
+
+    private List<BuffType> buffs = new List<BuffType>();
 
     void Start()
     {
@@ -21,12 +35,34 @@ public class PlayerSc : MonoBehaviour
             StartTurn(); // 턴 시작
         }
     }
+
+
+    // 버프 추가
+    public void AddBuff(BuffType buff)
+    {
+        buffs.Add(buff);
+        // 버프를 적용하는 추가적인 로직을 여기에 추가가능
+    }
+
+    // 버프 제거
+    public void RemoveBuff(BuffType buff)
+    {
+        buffs.Remove(buff);
+        // 버프를 제거하는 추가적인 로직을 여기에 추가 가능
+    }
+
+    // 특정 버프 확인
+    public bool HasBuff(BuffType buff)
+    {
+        return buffs.Contains(buff);
+    }
+
     void InitializePlayer() //플레이어 초기화
     {
         // 덱 초기화
         // 핸드 초기화
         energy = 3; // 에너지
-        health = 100; // 체력
+        health = maxHealth; // 체력
         block = 0; // 방어
     }
 
