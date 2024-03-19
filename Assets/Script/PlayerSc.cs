@@ -17,7 +17,7 @@ public class PlayerSc : MonoBehaviour
     //전투 변수들
     public int energy; // 에너지
     public int health; // 현재체력
-    public int maxHealth = 100; // 최대체력
+    public int maxHealth; // 최대체력
     public int block; // 방어
 
     private List<BuffType> buffs = new List<BuffType>();
@@ -61,6 +61,7 @@ public class PlayerSc : MonoBehaviour
     {
         // 덱 초기화
         // 핸드 초기화
+        maxHealth = 100;
         energy = 3; // 에너지
         health = maxHealth; // 체력
         block = 0; // 방어
