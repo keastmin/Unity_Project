@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster
+public class Monster : MonoBehaviour
 {
     protected string name;
     protected int health;
@@ -43,5 +43,8 @@ public class Monster
     }
 
     // 몬스터가 죽었을 시 동작하는 메소드
-    public void Die() { }
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
 }
