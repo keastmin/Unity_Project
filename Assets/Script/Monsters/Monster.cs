@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster : MonoBehaviour
+public abstract class Monster
 {
     protected string name;
     protected int health;
+    protected int maxHealth;
     protected int attackForce;
+    protected bool isAttackTurn;
 
     public string GetName()
     {
@@ -23,10 +25,22 @@ public class Monster : MonoBehaviour
         return attackForce;
     }
 
-    // 몬스터의 공격력을 반환하는 메소드(플레이어를 공격했을 때)
-    public int Attack()
+    public bool GetIsAttackTurn()
     {
-        return attackForce;
+        return isAttackTurn;
+    }
+
+    // 몬스터의 최대 체력 설정
+    public void SetMaxHealth()
+    {
+        maxHealth = health;
+    }
+
+    // 플레이어를 공격했을 때
+    public void Attack(PlayerSc player)
+    {
+        // player.hp -= attackForce;
+        Debug.Log("플레이어를 " + attackForce + "만큼 공격했습니다.");
     }
 
     // 몬스터의 체력을 깎는 메소드(플레이어에게 공격받았을 때)
@@ -35,6 +49,7 @@ public class Monster : MonoBehaviour
         if (health - damage > 0)
         {
             health -= damage;
+            Debug.Log("현재 체력 : " + health);
         }
         else
         {
@@ -43,8 +58,8 @@ public class Monster : MonoBehaviour
     }
 
     // 몬스터가 죽었을 시 동작하는 메소드
-    public void Die()
-    {
-        Destroy(gameObject);
-    }
+    public abstract void Die();
+
+    // 공격 턴일 때 행동 구현
+    public abstract void StartTurn();
 }

@@ -7,16 +7,17 @@ public class JawWorm : MonoBehaviour
     
 }
 
-public class JawWormFunction : Monster
+class B_JawWorm : Monster
 {
     int shield;
     int plusForce = 3;
 
-    public JawWormFunction()
+    public B_JawWorm()
     {
-        this.name = "Jaw Worm";
-        this.health = Random.Range(40, 45);
-        this.attackForce = 11;
+        base.name = "Jaw Worm";
+        base.health = Random.Range(40, 45);
+        base.attackForce = 11;
+        base.SetMaxHealth();
     }
 
     // 방어도 증가 메소드
@@ -41,5 +42,15 @@ public class JawWormFunction : Monster
         this.attackForce += plusForce;
 
         UseShield();
+    }
+
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void StartTurn()
+    {
+        throw new System.NotImplementedException();
     }
 }

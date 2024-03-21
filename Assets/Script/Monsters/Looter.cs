@@ -7,16 +7,17 @@ public class Looter : MonoBehaviour
 
 }
 
-class LooterFunction : Monster
+class B_Looter : Monster
 {
     int thiefPoint = 15;
     int shield = 6;
     int stealGoldBank = 0;
 
-    public LooterFunction()
+    public B_Looter()
     {
-        this.name = "Looter";
-        this.health = Random.Range(44, 49);
+        base.name = "Looter";
+        base.health = Random.Range(44, 49);
+        base.SetMaxHealth();
     }
 
     // 금화 뺏기, 플레이어의 현재 금화 개수를 매개변수로 받음.
@@ -62,5 +63,15 @@ class LooterFunction : Monster
     public int ReturnGold()
     {
         return stealGoldBank;
+    }
+
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void StartTurn()
+    {
+        throw new System.NotImplementedException();
     }
 }
