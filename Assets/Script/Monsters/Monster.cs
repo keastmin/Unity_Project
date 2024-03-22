@@ -40,7 +40,7 @@ public abstract class Monster
     public void Attack(PlayerSc player)
     {
         // player.hp -= attackForce;
-        Debug.Log("플레이어를 " + attackForce + "만큼 공격했습니다.");
+        Debug.Log("플레이어를 " + attackForce + "만큼 공격했습니다."); // 테스트 코드
     }
 
     // 몬스터의 체력을 깎는 메소드(플레이어에게 공격받았을 때)

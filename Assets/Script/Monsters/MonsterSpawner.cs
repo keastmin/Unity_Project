@@ -4,15 +4,32 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] Transform monsters;
+    [SerializeField] Transform monsterSpawnPlace;
+    List<Transform> monsterList;
+
+    private void Awake()
     {
-        
+        SetMonsterList();
+        Spawn();
     }
 
-    // Update is called once per frame
-    void Update()
+    // 몬스터 리스트 생성
+    void SetMonsterList()
     {
-        
+        monsterList = new List<Transform>();
+
+        foreach (Transform child in monsters)
+        {
+            monsterList.Add(child);
+        }
+    }
+
+    // 몬스터 스폰
+    void Spawn()
+    {
+        int randomMonsterNum = Random.Range(0, monsterList.Count);
+
+        Instantiate(monsterList[randomMonsterNum], monsterSpawnPlace);
     }
 }

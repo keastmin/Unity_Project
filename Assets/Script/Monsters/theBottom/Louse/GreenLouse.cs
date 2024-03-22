@@ -106,16 +106,19 @@ class B_GreenLouse : Monster
     // 공격 or 약화 2 부여 패턴 임의로 사용
     private void AttackPattern()
     {
-        int randomPattern = Random.Range(0, 2);
+        int randomPattern = Random.Range(0, 5);
 
         Debug.Log("랜덤 패턴 값 : " + randomPattern); // 테스트 코드
 
-        if (randomPattern == 0)
+        if (randomPattern < 3)
         {
+            Debug.Log("플레이어 공격"); // 테스트 코드
             Attack(player);
         }
-        else if (randomPattern == 1)
+        else
         {
+            Debug.Log("플레이어에게 약화 부여"); // 테스트 코드
+
             // 임의로 6 부여. 수정 예정.
             GiveWeakening(6);
         }
