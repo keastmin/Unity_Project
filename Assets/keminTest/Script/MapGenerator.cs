@@ -77,6 +77,12 @@ public class MApGenerator : MonoBehaviour
             {
                 path.Add(gridPositions[currentX, y]); // 현재 위치를 경로에 추가
 
+                if (!usedPosX[y].Contains(currentX))
+                {
+                    usedPosX[y].Add(currentX);
+                    posX[y].Add(currentX);
+                }
+
                 // 다음 층의 x 위치를 결정
                 List<int> possibleX = new List<int>();
                 if (currentX > 0) possibleX.Add(currentX - 1);
@@ -84,12 +90,6 @@ public class MApGenerator : MonoBehaviour
                 if (currentX < 6) possibleX.Add(currentX + 1);
 
                 currentX = possibleX[Random.Range(0, possibleX.Count)]; // 다음 x 위치 랜덤 선택
-
-                if (!usedPosX[y].Contains(currentX))
-                {
-                    usedPosX[y].Add(currentX);
-                    posX[y].Add(currentX);
-                }
             }
 
             paths.Add(path); // 생성된 경로를 경로 리스트에 추가
@@ -121,7 +121,7 @@ public class MApGenerator : MonoBehaviour
             for (int j = 0; j < posX[i].Count; j++) {
                 Vector2 buttonPos = gridPositions[posX[i][j], i];
                 GameObject buttonObj = Instantiate(buttonPrefab, gridPanel);
-                buttonObj.transform.localPosition = buttonPos;
+                buttonObj.transform.position = buttonPos;
             }
         }
     }
