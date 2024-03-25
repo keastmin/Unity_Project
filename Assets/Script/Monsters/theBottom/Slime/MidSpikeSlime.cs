@@ -4,27 +4,34 @@ using UnityEngine;
 
 public class MidSpikeSlime : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] PlayerSc player;
+    B_MidSpikeSlime midSpikeSlime;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        midSpikeSlime = new B_MidSpikeSlime();
+        midSpikeSlime.player = player;
+
+        Debug.Log(midSpikeSlime.GetName() + " 생성"); // 테스트 코드
     }
 }
 
 class B_MidSpikeSlime : Monster
 {
+    bool isGivingCard; // 전 턴에 '점액투성이' 카드를 부여하는 패턴을 사용했는지에 대한 bool형 반환
+
     public B_MidSpikeSlime()
     {
-        base.name = "Mid Spike Slime";
-        base.health = Random.Range(28, 33);
-        base.attackForce = 8;
-        base.SetMaxHealth();
+        InitMonster();
+    }
+
+    public override void StartTurn()
+    {
+        if (isAttackTurn)
+        {
+            AttackPattern();
+            isAttackTurn = !isAttackTurn;
+        }
     }
 
     public override void Die()
@@ -32,16 +39,39 @@ class B_MidSpikeSlime : Monster
         throw new System.NotImplementedException();
     }
 
+    private void InitMonster()
+    {
+        base.name = "Mid Spike Slime";
+        base.health = Random.Range(28, 33);
+        base.attackForce = 8;
+        base.SetMaxHealth();
+    }
+
     // 점액투성이 카드 1장 지급
+    private void GiveMucusCard()
+    {
+
+    }
 
     // '손상' 디버프 부여, 플레이어의 방어도를 매개변수로 받음.
-    public int GiveLowDefence(int playerShield)
+    private int GiveLowDefence(int playerShield)
     {
         return (int)(playerShield * 0.75);
     }
 
-    public override void StartTurn()
+    private void AttackPattern()
     {
-        throw new System.NotImplementedException();
+        Attack(player);
+
+        if (isGivingCard)
+        {
+            GiveLowDefence(20); // 임의의 플레이어 방어도 설정.
+        }
+        else
+        {
+            GiveMucusCard();
+        }
+
+        isGivingCard = !isGivingCard;
     }
 }

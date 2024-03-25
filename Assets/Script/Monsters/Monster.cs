@@ -9,6 +9,7 @@ public abstract class Monster
     protected int maxHealth;
     protected int attackForce;
     protected bool isAttackTurn;
+    public PlayerSc player;
 
     public string GetName()
     {
@@ -30,10 +31,14 @@ public abstract class Monster
         return isAttackTurn;
     }
 
-    // 몬스터의 최대 체력 설정
     public void SetMaxHealth()
     {
         maxHealth = health;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 
     // 플레이어를 공격했을 때
@@ -57,9 +62,9 @@ public abstract class Monster
         }
     }
 
-    // 몬스터가 죽었을 시 동작하는 메소드
-    public abstract void Die();
-
     // 공격 턴일 때 행동 구현
     public abstract void StartTurn();
+
+    // 몬스터가 죽었을 시 동작하는 메소드
+    public abstract void Die();
 }

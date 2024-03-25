@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class SmallSpikeSlime : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] PlayerSc player;
+    B_SmallSpikeSlime smallSpikeSlime;
+
+    private void Awake()
     {
-        
+        smallSpikeSlime = new B_SmallSpikeSlime();
+        smallSpikeSlime.player = player;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        // if (playerTurnEnd)
+            // isAttackTurn = true;
+            // smallSpikeSlime.StartTurn();
     }
 }
 
@@ -21,19 +25,31 @@ class B_SmallSpikeSlime : Monster
 {
     public B_SmallSpikeSlime()
     {
-        base.name = "Small Spike Slime";
-        base.health = Random.Range(10, 15);
-        base.attackForce = 5;
-        base.SetMaxHealth();
+        InitMonster();
     }
 
+    // 공격 턴일 때
+    public override void StartTurn()
+    {
+        if (isAttackTurn)
+        {
+            Attack(player);
+            isAttackTurn = !isAttackTurn;
+        }
+    }
+
+    //죽었을 때
     public override void Die()
     {
         throw new System.NotImplementedException();
     }
 
-    public override void StartTurn()
+    // 몬스터 초기화
+    private void InitMonster()
     {
-        throw new System.NotImplementedException();
+        base.name = "Small Spike Slime";
+        base.health = Random.Range(10, 15);
+        base.attackForce = 5;
+        base.SetMaxHealth();
     }
 }

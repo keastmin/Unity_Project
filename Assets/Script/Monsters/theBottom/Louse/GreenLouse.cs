@@ -10,6 +10,7 @@ public class GreenLouse : MonoBehaviour
     private void Awake()
     {
         greenLouse = new B_GreenLouse();
+        greenLouse.player = player;
         Debug.Log(greenLouse.GetName() + " 생성"); // 테스트 코드
     }
 
@@ -33,43 +34,19 @@ public class GreenLouse : MonoBehaviour
         // 임의의 3 값 부여. 수정 예정.
         greenLouse.Damaged(3);
     }
-
-
 }
+
+
 
 class B_GreenLouse : Monster
 {
     int shield;
     bool isUsingShieldOnce;
     bool isDamagedOnce;
-    PlayerSc player;
 
     public B_GreenLouse()
     {
-        base.name = "Green Louse";
-        base.health = Random.Range(10, 16);
-        base.attackForce = Random.Range(5, 8);
-        this.shield = Random.Range(3, 8);
-        base.SetMaxHealth();
-    }
-
-    public void SetIsDamageTrue()
-    {
-        isDamagedOnce = true;
-    }
-
-    // '몸 말기' 버프 사용
-    public void UseShield()
-    {
-        if (!isUsingShieldOnce)
-        {
-            Debug.Log("현재 체력 " + health); // 테스트 코드
-
-            isUsingShieldOnce = true;
-            health += shield;
-
-            Debug.Log("현재 체력 " + health); // 테스트 코드
-        }
+        InitMonster();
     }
 
     // 공격 턴일 때
@@ -94,11 +71,40 @@ class B_GreenLouse : Monster
     // 죽었을 때
     public override void Die()
     {
-        
+
+    }
+
+    public void SetIsDamageTrue()
+    {
+        isDamagedOnce = true;
+    }
+
+    // 몬스터 초기화
+    private void InitMonster()
+    {
+        base.name = "Green Louse";
+        base.health = Random.Range(10, 16);
+        base.attackForce = Random.Range(5, 8);
+        this.shield = Random.Range(3, 8);
+        base.SetMaxHealth();
+    }
+
+    // '몸 말기' 버프 사용
+    private void UseShield()
+    {
+        if (!isUsingShieldOnce)
+        {
+            Debug.Log("현재 체력 " + health); // 테스트 코드
+
+            isUsingShieldOnce = true;
+            health += shield;
+
+            Debug.Log("현재 체력 " + health); // 테스트 코드
+        }
     }
 
     // '약화' 디버프 부여, 플레이어의 공격력을 매개변수로 받음.
-    public void GiveWeakening(int playerAttackForce)
+    private void GiveWeakening(int playerAttackForce)
     {
         playerAttackForce = (int)(playerAttackForce * 0.75);
     }
@@ -118,9 +124,7 @@ class B_GreenLouse : Monster
         else
         {
             Debug.Log("플레이어에게 약화 부여"); // 테스트 코드
-
-            // 임의로 6 부여. 수정 예정.
-            GiveWeakening(6);
+            GiveWeakening(6); // GiveWeakening(player.attackForce);
         }
     }
 }
