@@ -10,6 +10,15 @@ public class MApGenerator : MonoBehaviour
     // 버튼 프리팹
     public GameObject buttonPrefab;
 
+    // 각 스테이지에 해당하는 프리팹
+    public GameObject normalStage;
+    public GameObject eliteStage;
+    public GameObject restStage;
+    public GameObject eventStage;
+    public GameObject merchantStage;
+    public GameObject treasureStage;
+
+    // 그리드의 위치의 기반이될 판넬
     public Transform gridPanel;
     private Vector2[,] gridPositions = new Vector2[7, 15];
     private List<List<Vector2>> paths = new List<List<Vector2>>();
@@ -104,14 +113,6 @@ public class MApGenerator : MonoBehaviour
             pathColors.Add(newColor);
         }
 
-        for(int i = 0; i < 15; i++)
-        {
-            for(int j = 0; j < posX[i].Count; j++)
-            {
-                Debug.Log((i) + " " + (posX[i][j]));
-            }
-        }
-
         CreateButton();
     }
 
@@ -121,7 +122,47 @@ public class MApGenerator : MonoBehaviour
         {
             for (int j = 0; j < posX[i].Count; j++) {
                 Vector2 buttonPos = gridPositions[posX[i][j], i];
-                GameObject buttonObj = Instantiate(buttonPrefab, gridPanel);
+                GameObject randomButton;
+
+                if (i == 0)
+                {
+                    randomButton = normalStage;
+                }
+                else if (i == 8)
+                {
+                    randomButton = treasureStage;
+                }
+                else if (i == 14)
+                {
+                    randomButton = restStage;
+                }
+                else
+                {
+                    int rand = Random.Range(0, 100);
+
+                    if (rand < 45)
+                    {
+                        randomButton = normalStage;
+                    }
+                    else if (rand < 67)
+                    {
+                        randomButton = eventStage;
+                    }
+                    else if (rand < 83)
+                    {
+                        randomButton = eliteStage;
+                    }
+                    else if (rand < 95)
+                    {
+                        randomButton = restStage;
+                    }
+                    else
+                    {
+                        randomButton = merchantStage;
+                    }
+                }
+
+                GameObject buttonObj = Instantiate(randomButton, gridPanel);
                 buttonObj.transform.position = buttonPos;
             }
         }
