@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class Looter : MonoBehaviour
 {
+    [SerializeField] PlayerSc player;
+    B_Looter looter;
 
+    private void Awake()
+    {
+        looter = new B_Looter();
+        looter.player = player;
+
+        Debug.Log(looter.GetName() + " 생성"); // 테스트 코드
+    }
 }
 
 class B_Looter : Monster
@@ -15,13 +24,47 @@ class B_Looter : Monster
 
     public B_Looter()
     {
+        InitMonster();
+    }
+
+    public override void InitMonster()
+    {
         base.name = "Looter";
         base.health = Random.Range(44, 49);
         base.SetMaxHealth();
     }
 
+    public override void AttackPattern()
+    {
+        GetGold(100); // 임의의 인수 사용.
+
+        int randomAttackPattern = Random.Range(0, 4);
+
+        if (randomAttackPattern == 0)
+        {
+            Steal();
+        }
+        else if (randomAttackPattern == 1)
+        {
+            Sting();
+        }
+        else if (randomAttackPattern == 2)
+        {
+            UseShield();
+        }
+        else
+        {
+            RunAway();
+        }
+    }
+
+    public override void Die()
+    {
+        ReturnGold();
+    }
+
     // 금화 뺏기, 플레이어의 현재 금화 개수를 매개변수로 받음.
-    public int GetGold(int playerGold)
+    private int GetGold(int playerGold)
     {
         if (playerGold - thiefPoint > 0)
         {
@@ -63,15 +106,5 @@ class B_Looter : Monster
     public int ReturnGold()
     {
         return stealGoldBank;
-    }
-
-    public override void Die()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void StartTurn()
-    {
-        throw new System.NotImplementedException();
     }
 }

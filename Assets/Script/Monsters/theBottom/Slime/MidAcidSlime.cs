@@ -4,16 +4,15 @@ using UnityEngine;
 
 public class MidAcidSlime : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] PlayerSc player;
+    B_MidAcidSlime midAcidSlime;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        midAcidSlime = new B_MidAcidSlime();
+        player = midAcidSlime.player;
+
+        Debug.Log(midAcidSlime.GetName() + " 생성"); // 테스트 코드
     }
 }
 
@@ -21,24 +20,35 @@ class B_MidAcidSlime : Monster
 {
     public B_MidAcidSlime()
     {
+        InitMonster();
+    }
+
+    public override void InitMonster()
+    {
         base.name = "Mid Acid Slime";
         base.health = Random.Range(28, 33);
         base.attackForce = 7;
         base.SetMaxHealth();
     }
 
-    // 점액투성이 카드 1장 지급
-
-    // 공격력 10으로 상승
-    public void RaiseAttackForce()
+    public override void AttackPattern()
     {
-        this.attackForce = 10;
-    }
+        int randomAttackPattern = Random.Range(0, 3);
 
-    // '약화' 디버프 부여, 플레이어의 공격력을 매개변수로 받음.
-    public int GiveWeakening(int playerAttackForce)
-    {
-        return playerAttackForce = (int)(playerAttackForce * 0.75);
+        if (randomAttackPattern == 0)
+        {
+            GiveMucusCard();
+        }
+        else if (randomAttackPattern == 1)
+        {
+            RaiseAttackForce();
+        }
+        else
+        {
+            GiveWeakening(10); // 임의의 인수 설정;
+        }
+
+        Attack(player);
     }
 
     public override void Die()
@@ -46,8 +56,21 @@ class B_MidAcidSlime : Monster
         throw new System.NotImplementedException();
     }
 
-    public override void StartTurn()
+    // 점액투성이 카드 1장 지급
+    private void GiveMucusCard()
     {
-        throw new System.NotImplementedException();
+
+    }
+
+    // 공격력 10으로 상승
+    private void RaiseAttackForce()
+    {
+        this.attackForce = 10;
+    }
+
+    // '약화' 디버프 부여, 플레이어의 공격력을 매개변수로 받음.
+    private int GiveWeakening(int playerAttackForce)
+    {
+        return playerAttackForce = (int)(playerAttackForce * 0.75);
     }
 }

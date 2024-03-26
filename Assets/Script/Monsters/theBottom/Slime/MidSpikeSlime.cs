@@ -25,21 +25,7 @@ class B_MidSpikeSlime : Monster
         InitMonster();
     }
 
-    public override void StartTurn()
-    {
-        if (isAttackTurn)
-        {
-            AttackPattern();
-            isAttackTurn = !isAttackTurn;
-        }
-    }
-
-    public override void Die()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    private void InitMonster()
+    public override void InitMonster()
     {
         base.name = "Mid Spike Slime";
         base.health = Random.Range(28, 33);
@@ -47,19 +33,7 @@ class B_MidSpikeSlime : Monster
         base.SetMaxHealth();
     }
 
-    // 점액투성이 카드 1장 지급
-    private void GiveMucusCard()
-    {
-
-    }
-
-    // '손상' 디버프 부여, 플레이어의 방어도를 매개변수로 받음.
-    private int GiveLowDefence(int playerShield)
-    {
-        return (int)(playerShield * 0.75);
-    }
-
-    private void AttackPattern()
+    public override void AttackPattern()
     {
         Attack(player);
 
@@ -73,5 +47,22 @@ class B_MidSpikeSlime : Monster
         }
 
         isGivingCard = !isGivingCard;
+    }
+
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    // 점액투성이 카드 1장 지급
+    private void GiveMucusCard()
+    {
+
+    }
+
+    // '손상' 디버프 부여, 플레이어의 방어도를 매개변수로 받음.
+    private int GiveLowDefence(int playerShield)
+    {
+        return (int)(playerShield * 0.75);
     }
 }
