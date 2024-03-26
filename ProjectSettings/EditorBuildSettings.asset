@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MapScene.unity
     guid: cca52b525edc0904b8433830f2ed37c3
+  - enabled: 1
+    path: Assets/Scenes/keminTestScene.unity
+    guid: a81c1203f2430994db45288a49acec3f
   m_configObjects: {}

@@ -55,6 +55,7 @@ public class MApGenerator : MonoBehaviour
     {
         InitPosXList();
 
+        // 1번째 x값 저장
         int firstX = 0;
 
         for (int pathNum = 0; pathNum < 6; pathNum++)

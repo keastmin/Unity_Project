@@ -137,7 +137,7 @@ public class MainMenu : MonoBehaviour
         if(selectCharacter == 0)
         {
             Debug.Log("아이언클래드로 출정");
-            SceneManager.LoadScene("MapScene");
+            SceneManager.LoadScene("KeminTestScene");
         }
     }
 }
