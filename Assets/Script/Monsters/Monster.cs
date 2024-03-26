@@ -41,6 +41,25 @@ public abstract class Monster
         return maxHealth;
     }
 
+    // 몬스터 초기화
+    public abstract void InitMonster();
+
+    // 공격 턴일 때 행동 구현
+    public void StartTurn()
+    {
+        if (isAttackTurn)
+        {
+            AttackPattern();
+            isAttackTurn = false;
+        }
+    }
+
+    // 몬스터의 공격 패턴 구현
+    public abstract void AttackPattern();
+
+    // 몬스터가 죽었을 때
+    public abstract void Die();
+
     // 플레이어를 공격했을 때
     public void Attack(PlayerSc player)
     {
@@ -61,10 +80,4 @@ public abstract class Monster
             Die();
         }
     }
-
-    // 공격 턴일 때 행동 구현
-    public abstract void StartTurn();
-
-    // 몬스터가 죽었을 시 동작하는 메소드
-    public abstract void Die();
 }

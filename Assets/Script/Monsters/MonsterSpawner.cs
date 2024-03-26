@@ -30,6 +30,7 @@ public class MonsterSpawner : MonoBehaviour
     {
         int randomMonsterNum = Random.Range(0, monsterList.Count);
 
-        Instantiate(monsterList[randomMonsterNum], monsterSpawnPlace);
+        GameObject monster = Instantiate(monsterList[randomMonsterNum].gameObject);
+        monster.transform.position = monsterSpawnPlace.transform.position;
     }
 }
