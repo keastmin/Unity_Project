@@ -474,6 +474,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonPrefab: {fileID: 6028152995236875545, guid: a23d24e4982770a48b09057806f34a7a, type: 3}
+  normalStage: {fileID: 2825738175737798543, guid: a985af53798708f468d15043c9909a17, type: 3}
+  eliteStage: {fileID: 7514514580340017567, guid: ddc9dd008045e5d4a8df2709a906cdef, type: 3}
+  restStage: {fileID: 1859243989828523055, guid: c9836dc00b13e054bb8c7a559b56a84f, type: 3}
+  eventStage: {fileID: 2317580060202740054, guid: e196d3d67954b814385e8b54ce848d8f, type: 3}
+  merchantStage: {fileID: 8373361702127108678, guid: dbe224b6a3bfae7429a2a1f0525760d8, type: 3}
+  treasureStage: {fileID: 4551023022774820335, guid: 02392803c1af85043a6a3ff5a3087012, type: 3}
   gridPanel: {fileID: 1614377887}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
