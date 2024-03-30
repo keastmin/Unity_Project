@@ -7,8 +7,15 @@ using UnityEngine.UI;
 
 public class MApGenerator : MonoBehaviour
 {
-    // 버튼 프리팹
-    public GameObject buttonPrefab;
+    // 각 층에 활성화 될 노드
+    public class Node
+    {
+        public Vector2 position;
+        public int stageType;
+        public bool isSelected;
+        public GameObject buttonPrefab;
+        public List<Node> nextButton;
+    }
 
     // 각 스테이지에 해당하는 프리팹
     public GameObject normalStage;
@@ -52,7 +59,6 @@ public class MApGenerator : MonoBehaviour
 
     void InitPosXList()
     {
-        Debug.Log(usedPosX.Length);
         for(int i = 0; i < 15; i++)
         {
             usedPosX[i] = new HashSet<int>();
@@ -104,6 +110,7 @@ public class MApGenerator : MonoBehaviour
 
             paths.Add(path); // 생성된 경로를 경로 리스트에 추가
 
+            // 기즈모를 통한 경로 디버깅, 경로마다 색상을 다르게 부여
             Color newColor;
             do
             {
@@ -113,9 +120,11 @@ public class MApGenerator : MonoBehaviour
             pathColors.Add(newColor);
         }
 
+        // 버튼 생성
         CreateButton();
     }
 
+    // 확률적 버튼 생성
     void CreateButton()
     {
         for(int i = 0; i < 15; i++)
@@ -168,6 +177,7 @@ public class MApGenerator : MonoBehaviour
         }
     }
 
+    // 기즈모를 통한 경로 디버그
     private void OnDrawGizmos()
     {
         if (paths.Count > 0)
