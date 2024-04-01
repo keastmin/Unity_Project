@@ -30,6 +30,10 @@ public class MApGenerator : MonoBehaviour
     private Vector2[,] gridPositions = new Vector2[7, 15];
     private List<List<Vector2>> paths = new List<List<Vector2>>();
 
+    // 그리드 정보
+    private int col = 7;  // 열의 수
+    private int row = 15; // 행의 수
+
     // 경로와 각 방에 해당하는 노드 연결 변수
     List<int>[] posX = new List<int>[15];
     HashSet<int>[] usedPosX = new HashSet<int>[15];
@@ -37,6 +41,9 @@ public class MApGenerator : MonoBehaviour
     // 기즈모 디버깅을 위한 변수
     HashSet<Color> usedColors = new HashSet<Color>();
     private List<Color> pathColors = new List<Color>();
+
+    // Test
+    private GameObject[,] grid;
 
     // Start is called before the first frame update
     void Start()
@@ -47,12 +54,27 @@ public class MApGenerator : MonoBehaviour
 
     void CreateGrid()
     {
-        for (int x = 0; x < 7; x++)
+        RectTransform gridRectTransform = gridPanel.GetComponent<RectTransform>();
+        float panelWidth = gridRectTransform.rect.width;    // 판넬의 너비
+        float panelHeight = gridRectTransform.rect.height;  // 판넬의 높이
+
+        float spacingX = panelWidth / col;  // 열 간의 간격
+        float spacingY = 120; // 행 간의 간격
+
+        // 그리드의 시작 위치를 계산 (왼쪽 하단 모서리 기준)
+        float startX = spacingX;
+        float startY = 20;
+
+        for (int x = 0; x < col; x++)
         {
-            for (int y = 0; y < 15; y++)
+            for (int y = 0; y < row; y++)
             {
-                Vector2 position = new Vector2(x * 200 + 400, y * 150 + 100);
-                gridPositions[x, y] = position;
+                // 각 셀의 위치를 계산
+                float posX = startX + x * spacingX;
+                float posY = startY + y * spacingY;
+
+                // 셀 위치를 배열에 저장
+                gridPositions[x, y] = new Vector2(posX, posY);
             }
         }
     }
@@ -121,7 +143,7 @@ public class MApGenerator : MonoBehaviour
         }
 
         // 버튼 생성
-        CreateButton();
+        // CreateButton();
     }
 
     // 확률적 버튼 생성
