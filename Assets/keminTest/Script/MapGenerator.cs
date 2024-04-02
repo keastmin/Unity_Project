@@ -11,6 +11,8 @@ public class MApGenerator : MonoBehaviour
     public class Node
     {
         public Vector2 position;
+        public int x;
+        public int y;
         public int stageType;
         public bool isSelected;
         public bool isEnable;
@@ -18,9 +20,11 @@ public class MApGenerator : MonoBehaviour
         public GameObject buttonPrefab;
         public List<Node> nextButton;
 
-        public Node(Vector2 pos)
+        public Node(Vector2 pos, int width, int height)
         {
             position = pos;
+            x = width;
+            y = height;
             isSelected = false;
             isEnable = false;
             isClear = false;
@@ -29,12 +33,8 @@ public class MApGenerator : MonoBehaviour
     }
 
     // 각 스테이지에 해당하는 버튼 프리팹
-    public GameObject normalStage;
-    public GameObject eliteStage;
-    public GameObject restStage;
-    public GameObject eventStage;
-    public GameObject merchantStage;
-    public GameObject treasureStage;
+    // 0: 일반 전투, 1: 휴식, 2: 이벤트, 3: 엘리트 전투, 4: 상점, 5: 보물 상자
+    public GameObject[] buttons = new GameObject[6];
 
     // 그리드의 위치의 기반이될 판넬
     public Transform gridPanel;
@@ -83,7 +83,7 @@ public class MApGenerator : MonoBehaviour
                 // 셀 위치를 배열에 저장
                 Vector2 position = new Vector2(posX, posY);
                 gridPositions[x, y] = position;
-                nodeGrid[x, y] = new Node(position);
+                nodeGrid[x, y] = new Node(position, x, y);
             }
         }
     }
@@ -168,8 +168,11 @@ public class MApGenerator : MonoBehaviour
 
                 int prevX = currentX;
                 currentX = possibleX[Random.Range(0, possibleX.Count)];
-                nodeGrid[prevX, y].nextButton.Add(nodeGrid[currentX, y + 1]);
-                nodeGrid[currentX, y + 1].isSelected = true;
+                if (!nodeGrid[prevX, y].nextButton.Contains(nodeGrid[currentX, y + 1]))
+                {
+                    nodeGrid[prevX, y].nextButton.Add(nodeGrid[currentX, y + 1]);
+                    nodeGrid[currentX, y + 1].isSelected = true;
+                }
                 tmp.Add(currentX);
             }
         
@@ -197,61 +200,74 @@ public class MApGenerator : MonoBehaviour
             {
                 if (nodeGrid[i, j].isSelected)
                 {
-                    Vector2 buttonPos = nodeGrid[i, j].position;
-                    GameObject buttonObj = Instantiate(normalStage, gridPanel);
-                    buttonObj.transform.position = buttonPos;
+                    Debug.Log((j) + " " + (i) + " " + nodeGrid[i, j].nextButton.Count);
                 }
             }
         }
 
-        //for(int i = 0; i < 15; i++)
-        //{
-        //    for (int j = 0; j < posX[i].Count; j++) {
-        //        Vector2 buttonPos = gridPositions[posX[i][j], i];
-        //        GameObject randomButton;
+        for (int i = 0; i < col; i++)
+        {
+            if (nodeGrid[i, 0].isSelected)
+            {
+                Queue<Node> nodeQ = new Queue<Node>();
+                nodeQ.Enqueue(nodeGrid[i, 0]);
 
-        //        if (i == 0)
-        //        {
-        //            randomButton = normalStage;
-        //        }
-        //        else if (i == 8)
-        //        {
-        //            randomButton = treasureStage;
-        //        }
-        //        else if (i == 14)
-        //        {
-        //            randomButton = restStage;
-        //        }
-        //        else
-        //        {
-        //            int rand = Random.Range(0, 100);
+                while (nodeQ.Count > 0)
+                {
+                    Node node = nodeQ.Dequeue();
+                    int x = node.x;
+                    int y = node.y;
 
-        //            if (rand < 45)
-        //            {
-        //                randomButton = normalStage;
-        //            }
-        //            else if (rand < 67)
-        //            {
-        //                randomButton = eventStage;
-        //            }
-        //            else if (rand < 83)
-        //            {
-        //                randomButton = eliteStage;
-        //            }
-        //            else if (rand < 95)
-        //            {
-        //                randomButton = restStage;
-        //            }
-        //            else
-        //            {
-        //                randomButton = merchantStage;
-        //            }
-        //        }
+                    int type = chooseType(y);
+                    Debug.Log((i) + " " + (nodeQ.Count));
+                    if (nodeGrid[x, y].buttonPrefab != null) continue;
 
-        //        GameObject buttonObj = Instantiate(randomButton, gridPanel);
-        //        buttonObj.transform.position = buttonPos;
-        //    }
-        //}
+                    nodeGrid[x, y].stageType = type;
+                    nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
+                    nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
+
+                    for (int j = 0; j < node.nextButton.Count; j++)
+                    {
+                        nodeQ.Enqueue(node.nextButton[j]);
+                    }
+                }
+            }
+        }
+    }
+
+    private int chooseType(int floor)
+    {
+        if(floor == 8)
+        {
+            return 5;
+        }
+        else if( floor == 14)
+        {
+            return 1;
+        }
+        else if(floor > 0)
+        {
+            int rand = Random.Range(0, 100);
+
+            if(rand < 5)
+            {
+                return 4;
+            }
+            else if(rand < 17)
+            {
+                return 1;
+            }
+            else if(rand < 33)
+            {
+                return 3;
+            }
+            else if(rand < 55)
+            {
+                return 2;
+            }
+        }
+        
+        return 0;
     }
 
     // 기즈모를 통한 경로 디버그
