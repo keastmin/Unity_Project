@@ -113,7 +113,7 @@ MonoBehaviour:
   calculateTangents: 0
   logErrors: 0
   disableRenderingOnOverride: 1
-  _animationName: 
+  _animationName: idle
   loop: 0
   timeScale: 1
 --- !u!114 &6594553667795374964
@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d156ab1769c734d971ad343b838898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &3235642432015200832
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,6 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 935d877b20292ad4b9ea061762e01b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &3898535891453943103
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,6 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a22fd03431565f84ba7c6130c6ba6e88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &3973228278006072774
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,6 +515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c435b98572b5d4840ba2fa9df620aa9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &5264616605574710239
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,6 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b491b5913d42246418ea49edc5c2a88c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &7605771820828606152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,6 +1072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a29449d07d1c449a7b52da8931c395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &9090235426121125847
 GameObject:
   m_ObjectHideFlags: 0
