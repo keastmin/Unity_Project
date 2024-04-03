@@ -1,35 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Map : MonoBehaviour
 {
-    // 버튼 프리팹
-    public GameObject buttonPrefab;
+    // 버튼 프리팹들을 저장할 리스트
+    public List<GameObject> buttonPrefabs = new List<GameObject>();
 
     public Transform gridPanel;
     private Vector2[,] gridPositions = new Vector2[7, 15];
     private List<List<Vector2>> paths = new List<List<Vector2>>(); //2차원 리스트
 
+    private List<GameObject> randomImgList = new List<GameObject>();
+
     // 경로와 각 방에 해당하는 노드 연결 변수
-    List<int>[] posX = new List<int>[15];
-    HashSet<int>[] usedPosX = new HashSet<int>[15]; //중복 값 허용 x
+    private List<int>[] posX = new List<int>[15];
+    private HashSet<int>[] usedPosX = new HashSet<int>[15]; //중복 값 허용 x
 
     // 기즈모 디버깅을 위한 변수
-    HashSet<Color> usedColors = new HashSet<Color>();
+    private HashSet<Color> usedColors = new HashSet<Color>();
     private List<Color> pathColors = new List<Color>();
 
     // Start is called before the first frame update
     void Start()
     {
-        
-
         CreateGrid();
         GeneratePaths();
-       
     }
 
     void CreateGrid()
@@ -38,7 +34,7 @@ public class Map : MonoBehaviour
         {
             for (int y = 0; y < 15; y++)
             {
-                Vector2 position = new Vector2(x * 200, y * 150);
+                Vector2 position = new Vector2(x * 150, y * 150);
                 gridPositions[x, y] = position;
             }
         }
@@ -46,7 +42,6 @@ public class Map : MonoBehaviour
 
     void InitPosXList()
     {
-        Debug.Log(usedPosX.Length);
         for (int i = 0; i < 15; i++)
         {
             usedPosX[i] = new HashSet<int>();
@@ -58,7 +53,7 @@ public class Map : MonoBehaviour
     {
         InitPosXList();
 
-        // 1번째 x값 저장
+        //1번째 x값 저장
         int firstX = 0;
 
         for (int pathNum = 0; pathNum < 6; pathNum++)
@@ -107,49 +102,37 @@ public class Map : MonoBehaviour
             pathColors.Add(newColor);
         }
 
-        for (int i = 0; i < 15; i++)
-        {
-            for (int j = 0; j < posX[i].Count; j++)
-            {
-                Debug.Log((i) + " " + (posX[i][j]));
-            }
-        }
-
         CreateButton();
     }
 
     void CreateButton()
     {
-        RectTransform panelRectTransform = gridPanel.GetComponent<RectTransform>();
-        float panelWidth = panelRectTransform.rect.width;
-        float panelHeight = panelRectTransform.rect.height;
-
         for (int i = 0; i < 15; i++)
         {
             for (int j = 0; j < posX[i].Count; j++)
             {
-                // 패널의 중앙에 프리팹을 생성하기 위해 패널의 중앙 좌표를 기준으로 버튼의 위치를 설정합니다.
-                Vector2 buttonPos = new Vector2(panelWidth / 2, panelHeight / 2);
-
+                Vector2 buttonPos = gridPositions[posX[i][j], i];
+                GameObject buttonPrefab = buttonPrefabs[Random.Range(0, buttonPrefabs.Count)]; // 무작위 버튼 프리팹 선택
                 GameObject buttonObj = Instantiate(buttonPrefab, gridPanel);
                 buttonObj.transform.position = buttonPos;
+                randomImgList.Add(buttonObj);
             }
         }
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (paths.Count > 0)
-    //    {
-    //        for (int pathIndex = 0; pathIndex < paths.Count; pathIndex++)
-    //        {
-    //            var path = paths[pathIndex];
-    //            Gizmos.color = pathColors[pathIndex];
-    //            for (int i = 0; i < path.Count - 1; i++)
-    //            {
-    //                Gizmos.DrawLine(path[i], path[i + 1]);
-    //            }
-    //        }
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        if (paths.Count > 0)
+        {
+            for (int pathIndex = 0; pathIndex < paths.Count; pathIndex++)
+            {
+                var path = paths[pathIndex];
+                Gizmos.color = pathColors[pathIndex];
+                for (int i = 0; i < path.Count - 1; i++)
+                {
+                    Gizmos.DrawLine(path[i], path[i + 1]);
+                }
+            }
+        }
+    }
 }
