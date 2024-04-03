@@ -2,20 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map : MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
     // 버튼 프리팹들을 저장할 리스트
     public List<GameObject> buttonPrefabs = new List<GameObject>();
 
-    public Transform gridPanel;
+    public RectTransform gridPanel;
     private Vector2[,] gridPositions = new Vector2[7, 15];
-    private List<List<Vector2>> paths = new List<List<Vector2>>(); //2차원 리스트
+    private List<List<Vector2>> paths = new List<List<Vector2>>(); // 2차원 리스트
 
-    private List<GameObject> randomImgList = new List<GameObject>();
+    private List<GameObject> randomImgList = new List<GameObject>(); //랜덤 이미지
 
     // 경로와 각 방에 해당하는 노드 연결 변수
     private List<int>[] posX = new List<int>[15];
-    private HashSet<int>[] usedPosX = new HashSet<int>[15]; //중복 값 허용 x
+    private HashSet<int>[] usedPosX = new HashSet<int>[15]; // 중복 값 허용 x
 
     // 기즈모 디버깅을 위한 변수
     private HashSet<Color> usedColors = new HashSet<Color>();
@@ -30,11 +30,14 @@ public class Map : MonoBehaviour
 
     void CreateGrid()
     {
+        RectTransform panelRect = gridPanel.GetComponent<RectTransform>();
+
         for (int x = 0; x < 7; x++)
         {
             for (int y = 0; y < 15; y++)
             {
-                Vector2 position = new Vector2(x * 150, y * 150);
+
+                Vector2 position = new Vector2(x * 120, y * 120);
                 gridPositions[x, y] = position;
             }
         }
@@ -53,7 +56,7 @@ public class Map : MonoBehaviour
     {
         InitPosXList();
 
-        //1번째 x값 저장
+        // 1번째 x값 저장
         int firstX = 0;
 
         for (int pathNum = 0; pathNum < 6; pathNum++)
