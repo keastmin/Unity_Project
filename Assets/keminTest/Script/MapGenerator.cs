@@ -57,6 +57,33 @@ public class MApGenerator : MonoBehaviour
     {
         CreateGrid();
         GeneratePaths();
+        FirstFloorEnable();
+    }
+
+    void FirstFloorEnable()
+    {
+        for(int x = 0; x < col; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                if (nodeGrid[x, y].isSelected)
+                {
+                    StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+
+                    if (buttonComponent != null)
+                    {
+                        if (y == 0)
+                        {
+                            buttonComponent.stageEnable = true;
+                        }
+                        else
+                        {
+                            buttonComponent.stageEnable = false;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void CreateGrid()
