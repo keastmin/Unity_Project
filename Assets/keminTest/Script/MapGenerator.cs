@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,6 +39,7 @@ public class MApGenerator : MonoBehaviour
 
     // 그리드의 위치의 기반이될 판넬
     public Transform gridPanel;
+    public Transform viewContent;
     
     // 경로에 대한 변수
     private Vector2[,] gridPositions = new Vector2[7, 15];
@@ -58,6 +60,17 @@ public class MApGenerator : MonoBehaviour
         CreateGrid();
         GeneratePaths();
         FirstFloorEnable();
+        //ScrollTest();
+    }
+
+    void ScrollTest()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            GameObject newButton = Instantiate(buttons[0], viewContent);
+            Vector2 position = new Vector2(i, 100 * i);
+            newButton.transform.position = position;
+        }
     }
 
     void FirstFloorEnable()
@@ -75,12 +88,44 @@ public class MApGenerator : MonoBehaviour
                         if (y == 0)
                         {
                             buttonComponent.stageEnable = true;
+                            buttonComponent.SetStageEnable(true);
                         }
                         else
                         {
                             buttonComponent.stageEnable = false;
+                            buttonComponent.SetStageEnable(false);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    public void OnNodeCleared(int x, int y)
+    {
+        foreach(Node node in nodeGrid)
+        {
+            if(node.buttonPrefab != null)
+            {
+                StageBaseButton buttonComponent = node.buttonPrefab.GetComponent<StageBaseButton>();
+                if(buttonComponent != null)
+                {
+                    buttonComponent.stageEnable = false;
+                    buttonComponent.SetStageEnable(false);
+                }
+            }
+        }
+
+        Node clearedNode = nodeGrid[x, y];
+        foreach(Node nextNode in clearedNode.nextButton)
+        {
+            if(nextNode.buttonPrefab != null)
+            {
+                StageBaseButton nextButtonComponent = nextNode.buttonPrefab.GetComponent<StageBaseButton>();
+                if(nextButtonComponent != null)
+                {
+                    nextButtonComponent.stageEnable = true;
+                    nextButtonComponent.SetStageEnable(true);
                 }
             }
         }
@@ -89,6 +134,7 @@ public class MApGenerator : MonoBehaviour
     void CreateGrid()
     {
         RectTransform gridRectTransform = gridPanel.GetComponent<RectTransform>();
+        // RectTransform gridRectTransform = viewContent.GetComponent<RectTransform>();
         float panelWidth = gridRectTransform.rect.width;    // 판넬의 너비
         float panelHeight = gridRectTransform.rect.height;  // 판넬의 높이
 
@@ -221,17 +267,6 @@ public class MApGenerator : MonoBehaviour
     // 확률적 버튼 생성
     void CreateButton()
     {
-        for(int i = 0; i < col; i++)
-        {
-            for(int j = 0; j < row; j++)
-            {
-                if (nodeGrid[i, j].isSelected)
-                {
-                    Debug.Log((j) + " " + (i) + " " + nodeGrid[i, j].nextButton.Count);
-                }
-            }
-        }
-
         for (int i = 0; i < col; i++)
         {
             if (nodeGrid[i, 0].isSelected)
@@ -245,17 +280,22 @@ public class MApGenerator : MonoBehaviour
                     int x = node.x;
                     int y = node.y;
 
-                    int type = chooseType(y);
-                    Debug.Log((i) + " " + (nodeQ.Count));
                     if (nodeGrid[x, y].buttonPrefab != null) continue;
+                    int type = chooseType(y);
 
                     nodeGrid[x, y].stageType = type;
                     nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
+                    //nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], viewContent);
                     nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
-
-                    for (int j = 0; j < node.nextButton.Count; j++)
+                    StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+                    if(buttonComponent != null)
                     {
-                        nodeQ.Enqueue(node.nextButton[j]);
+                        buttonComponent.SetMapGenerator(x, y, this);
+                    }
+
+                    foreach (var nextNode in node.nextButton)
+                    {
+                        nodeQ.Enqueue(nextNode);
                     }
                 }
             }
