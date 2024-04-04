@@ -17,16 +17,5 @@ public class MerchantStageButton : StageBaseButton
     public override void OnStageButtonClick()
     {
         base.OnStageButtonClick();
-
-        if (!stageEnable)
-        {
-            Debug.Log("아직 활성화 되지 않았습니다.");
-        }
-        else
-        {
-            stageSelect = true;
-            stageClear = true;
-            Debug.Log("해당 층 클리어");
-        }
     }
 }
