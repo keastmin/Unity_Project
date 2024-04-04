@@ -14,7 +14,7 @@ public class MonsterCard : MonoBehaviour
     [SerializeField] Image cardImage;
 
     [Header("Monster Info")]
-    [SerializeField] MonsterCardSO cardSO;
+    public MonsterCardSO cardSO;
 
     private void Awake()
     {

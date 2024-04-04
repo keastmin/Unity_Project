@@ -387,6 +387,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  cardPrefab: {fileID: 6194812304866852703, guid: 7a1d08c932bb2cf44908bf599f8d87b6, type: 3}
+  cardSO: {fileID: 11400000, guid: 49e4ef69ea965bb489efc30e6962bb8d, type: 2}
+  cardCanvas: {fileID: 0}
 --- !u!1 &3973228278006072774
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,6 +947,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  cardPrefab: {fileID: 6194812304866852703, guid: 7a1d08c932bb2cf44908bf599f8d87b6, type: 3}
+  cardSO: {fileID: 11400000, guid: 49e4ef69ea965bb489efc30e6962bb8d, type: 2}
+  cardCanvas: {fileID: 990084766944242710, guid: 27e98a1cbe636c440851b370660ea54b, type: 3}
 --- !u!1 &7605771820828606152
 GameObject:
   m_ObjectHideFlags: 0

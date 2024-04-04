@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Monster
+public abstract class Monster : MonoBehaviour
 {
     protected string name;
     protected int health;
