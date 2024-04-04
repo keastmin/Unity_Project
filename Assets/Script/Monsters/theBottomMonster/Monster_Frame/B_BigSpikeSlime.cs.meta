@@ -3,7 +3,11 @@ guid: f450be98d7c5a4e4393402f9d2eb9b31
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - player: {instanceID: 0}
+  - monsterCardSO: {fileID: 11400000, guid: 49e4ef69ea965bb489efc30e6962bb8d, type: 2}
+  - cardPrefab: {fileID: 6194812304866852703, guid: 7a1d08c932bb2cf44908bf599f8d87b6, type: 3}
+  - cardCanvas: {fileID: 7155436560565623840, guid: 2e46300f191b93d43873e72d31d64316, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

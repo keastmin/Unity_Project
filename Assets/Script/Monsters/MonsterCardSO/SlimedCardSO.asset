@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b5cbaba012d6674491b7bc7c78e1718, type: 3}
-  m_Name: MucusCardSO
+  m_Name: SlimedCardSO
   m_EditorClassIdentifier: 
   cardName: "\uC810\uC561\uD22C\uC131\uC774"
   description: "\uC18C\uBA78"
