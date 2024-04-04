@@ -11,14 +11,22 @@ public class MApGenerator : MonoBehaviour
     // 각 층에 활성화 될 노드
     public class Node
     {
+        // 위치
         public Vector2 position;
+        // 인덱스
         public int x;
         public int y;
+        // 스테이지 타입
         public int stageType;
+        // 선택 여부
         public bool isSelected;
+        // 선택 가능 여부
         public bool isEnable;
+        // 클리어 여부
         public bool isClear;
+        // 버튼 프리팹
         public GameObject buttonPrefab;
+        // 다음 경로 노드 리스트
         public List<Node> nextButton;
 
         public Node(Vector2 pos, int width, int height)
@@ -39,7 +47,6 @@ public class MApGenerator : MonoBehaviour
 
     // 그리드의 위치의 기반이될 판넬
     public Transform gridPanel;
-    public Transform viewContent;
     
     // 경로에 대한 변수
     private Vector2[,] gridPositions = new Vector2[7, 15];
@@ -53,24 +60,16 @@ public class MApGenerator : MonoBehaviour
     List<List<int>> paths = new List<List<int>>();
     HashSet<Color> usedColors = new HashSet<Color>();
     private List<Color> pathColors = new List<Color>();
+    public GameObject linePrefab;
 
     // Start is called before the first frame update
     void Start()
     {
         CreateGrid();
         GeneratePaths();
+        pathLine();
+        CreateButton();
         FirstFloorEnable();
-        //ScrollTest();
-    }
-
-    void ScrollTest()
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            GameObject newButton = Instantiate(buttons[0], viewContent);
-            Vector2 position = new Vector2(i, 100 * i);
-            newButton.transform.position = position;
-        }
     }
 
     void FirstFloorEnable()
@@ -134,12 +133,11 @@ public class MApGenerator : MonoBehaviour
     void CreateGrid()
     {
         RectTransform gridRectTransform = gridPanel.GetComponent<RectTransform>();
-        // RectTransform gridRectTransform = viewContent.GetComponent<RectTransform>();
         float panelWidth = gridRectTransform.rect.width;    // 판넬의 너비
         float panelHeight = gridRectTransform.rect.height;  // 판넬의 높이
 
         float spacingX = panelWidth / (col + 1);  // 열 간의 간격
-        float spacingY = 120; // 행 간의 간격
+        float spacingY = 150; // 행 간의 간격
 
         // 그리드의 시작 위치를 계산 (왼쪽 하단 모서리 기준)
         float startX = spacingX;
@@ -259,9 +257,6 @@ public class MApGenerator : MonoBehaviour
             pathColors.Add(newColor);
             paths.Add(tmp);
         }
-
-        // 버튼 생성
-        CreateButton();
     }
 
     // 확률적 버튼 생성
@@ -285,7 +280,6 @@ public class MApGenerator : MonoBehaviour
 
                     nodeGrid[x, y].stageType = type;
                     nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
-                    //nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], viewContent);
                     nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
                     StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
                     if(buttonComponent != null)
@@ -335,6 +329,40 @@ public class MApGenerator : MonoBehaviour
         }
         
         return 0;
+    }
+
+    private void pathLine()
+    {
+        float lineSpacing = 25.0f;
+        if(paths.Count > 0)
+        {
+            for(int i = 0; i < paths.Count; i++)
+            {
+                for (int j = 0; j < 14; j++)
+                {
+                    int sX = paths[i][j];
+                    int fX = paths[i][j + 1];
+
+                    Vector2 startPos = new Vector2(gridPositions[sX, j].x, gridPositions[sX, j].y);
+                    Vector2 finishPos = new Vector2(gridPositions[fX, j + 1].x, gridPositions[fX, j + 1].y);
+
+                    float distance = Vector2.Distance(startPos, finishPos);
+                    Vector2 direction = (finishPos - startPos).normalized;
+                    float angle = Mathf.Atan2(direction.x, -direction.y) * Mathf.Rad2Deg;
+                    Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+
+                    int lineCount = Mathf.FloorToInt(distance / lineSpacing);
+
+                    // float lineLength = linePrefab.transform.localScale.y;
+
+                    for(int k = 0; k <= lineCount; k++)
+                    {
+                        Vector2 position = startPos + direction * (lineSpacing * k);
+                        GameObject line = Instantiate(linePrefab, new Vector3(position.x, position.y, 0), rotation, gridPanel);
+                    }
+                }
+            }
+        }
     }
 
     // 기즈모를 통한 경로 디버그
