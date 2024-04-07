@@ -58,8 +58,6 @@ public class MApGenerator : MonoBehaviour
 
     // 기즈모 디버깅을 위한 변수
     List<List<int>> paths = new List<List<int>>();
-    HashSet<Color> usedColors = new HashSet<Color>();
-    private List<Color> pathColors = new List<Color>();
     public GameObject linePrefab;
 
     // Start is called before the first frame update
@@ -69,6 +67,7 @@ public class MApGenerator : MonoBehaviour
         GeneratePaths();
         pathLine();
         CreateButton();
+        EditRoom();
         FirstFloorEnable();
     }
 
@@ -247,14 +246,6 @@ public class MApGenerator : MonoBehaviour
                 tmp.Add(currentX);
             }
         
-            // 기즈모를 통한 경로 디버깅, 경로마다 색상을 다르게 부여
-            Color newColor;
-            do
-            {
-                newColor = Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f);
-            } while (usedColors.Contains(newColor));
-            usedColors.Add(newColor);
-            pathColors.Add(newColor);
             paths.Add(tmp);
         }
     }
@@ -282,7 +273,7 @@ public class MApGenerator : MonoBehaviour
                     nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
                     nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
                     StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
-                    if(buttonComponent != null)
+                    if (buttonComponent != null)
                     {
                         buttonComponent.SetMapGenerator(x, y, this);
                     }
@@ -331,6 +322,45 @@ public class MApGenerator : MonoBehaviour
         return 0;
     }
 
+    private void EditRoom()
+    {
+        underSixFloor();
+    }
+
+    private void underSixFloor()
+    {
+        for(int x = 0; x < col; x++)
+        {
+            for(int y = 1; y < 6; y++)
+            {
+                if (nodeGrid[x, y].isSelected)
+                {
+                    int type = nodeGrid[x, y].stageType;
+
+                    if (type == 1 || type == 3)
+                    {
+                        Destroy(nodeGrid[x, y].buttonPrefab);
+                        nodeGrid[x, y].buttonPrefab = null;
+
+                        while (type == 1 || type == 3)
+                        {
+                            type = chooseType(y);
+                        }
+
+                        nodeGrid[x, y].stageType = type;
+                        nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
+                        nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
+                        StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+                        if (buttonComponent != null)
+                        {
+                            buttonComponent.SetMapGenerator(x, y, this);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void pathLine()
     {
         float lineSpacing = 25.0f;
@@ -353,33 +383,11 @@ public class MApGenerator : MonoBehaviour
 
                     int lineCount = Mathf.FloorToInt(distance / lineSpacing);
 
-                    // float lineLength = linePrefab.transform.localScale.y;
-
                     for(int k = 0; k <= lineCount; k++)
                     {
                         Vector2 position = startPos + direction * (lineSpacing * k);
-                        GameObject line = Instantiate(linePrefab, new Vector3(position.x, position.y, 0), rotation, gridPanel);
+                        Instantiate(linePrefab, new Vector3(position.x, position.y, 0), rotation, gridPanel);
                     }
-                }
-            }
-        }
-    }
-
-    // 기즈모를 통한 경로 디버그
-    private void OnDrawGizmos()
-    {
-        if (paths.Count > 0)
-        {
-            for (int i = 0; i < paths.Count; i++)
-            {
-                Gizmos.color = pathColors[i];
-
-                for (int j = 0; j < 14; j++)
-                {
-                    int fX = paths[i][j];
-                    int sX = paths[i][j + 1];
-
-                    Gizmos.DrawLine(gridPositions[fX, j], gridPositions[sX, j + 1]);
                 }
             }
         }
