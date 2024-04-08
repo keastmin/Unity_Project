@@ -56,19 +56,19 @@ public class MApGenerator : MonoBehaviour
     private int col = 7;  // 열의 수
     private int row = 15; // 행의 수
 
-    // 기즈모 디버깅을 위한 변수
+    // 다음 노드를 안내하는 실선을 표현하기 위한 변수
     List<List<int>> paths = new List<List<int>>();
     public GameObject linePrefab;
 
     // Start is called before the first frame update
     void Start()
     {
-        CreateGrid();
-        GeneratePaths();
-        pathLine();
-        CreateButton();
-        EditRoom();
-        FirstFloorEnable();
+        CreateGrid();           // 그리드 생성
+        GeneratePaths();        // 경로 생성
+        pathLine();             // 실선 그리기
+        CreateButton();         // 버튼 생성
+        EditRoom();             // 버튼 수정
+        FirstFloorEnable();     // 첫번째 층 활성화
     }
 
     void FirstFloorEnable()
@@ -98,6 +98,7 @@ public class MApGenerator : MonoBehaviour
             }
         }
     }
+
 
     public void OnNodeCleared(int x, int y)
     {
@@ -324,14 +325,16 @@ public class MApGenerator : MonoBehaviour
 
     private void EditRoom()
     {
-        underSixFloor();
+        //underSixFloor();
+        //fourTeenFloor();
+        consecutiveEdit();
     }
 
     private void underSixFloor()
     {
         for(int x = 0; x < col; x++)
         {
-            for(int y = 1; y < 6; y++)
+            for(int y = 1; y < 5; y++)
             {
                 if (nodeGrid[x, y].isSelected)
                 {
@@ -351,6 +354,126 @@ public class MApGenerator : MonoBehaviour
                         nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
                         nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
                         StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+                        if (buttonComponent != null)
+                        {
+                            buttonComponent.SetMapGenerator(x, y, this);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void fourTeenFloor()
+    {
+        for(int x = 0; x < col; x++)
+        {
+            if (nodeGrid[x, 13].isSelected)
+            {
+                int type = nodeGrid[x, 13].stageType;
+
+                if(type == 1)
+                {
+                    Destroy(nodeGrid[x, 13].buttonPrefab);
+                    nodeGrid[x, 13].buttonPrefab = null;
+
+                    while(type == 1)
+                    {
+                        type = chooseType(13);
+                    }
+
+                    nodeGrid[x, 13].stageType = type;
+                    nodeGrid[x, 13].buttonPrefab = Instantiate(buttons[type], gridPanel);
+                    nodeGrid[x, 13].buttonPrefab.transform.position = nodeGrid[x, 13].position;
+                    StageBaseButton buttonComponent = nodeGrid[x, 13].buttonPrefab.GetComponent<StageBaseButton>();
+                    if (buttonComponent != null)
+                    {
+                        buttonComponent.SetMapGenerator(x, 13, this);
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void consecutiveEdit()
+    {
+        // 최하층부터 마지막에서 바로 전 층까지 순회
+        for(int y = 0; y < row - 1; y++)
+        {
+            // 현재 층보다 한 단계 높은 층에서 규칙을 위반하는 방이 존재한다면 해당 변수에 들어있는 타입을 제외하고 재생성
+            List<int>[] changeNode = new List<int>[7];
+            
+            
+            // 한 단계 높은 층에 대해 변경해줄 것이기 때문에 규칙에 쓰여있는 층보다 한 단계 낮은 층을 기준으로 피해야 할 타입 저장
+            for(int x = 0; x < col; x++)
+            {
+                changeNode[x] = new List<int>();
+                if(y < 4 || y == 12)
+                {
+                    changeNode[x].Add(1);
+                }
+                if(y < 4)
+                {
+                    changeNode[x].Add(3);
+                }
+            }
+
+            // 본격적으로 각 층의 방을 순회
+            for (int x = 0; x < col; x++)
+            {
+                // 현재 인덱스의 노드가 선택된 적 있는 방이라면 진입
+                if (nodeGrid[x, y].isSelected)
+                {
+                    // 현재 선택된 노드와 타입
+                    Node curr = nodeGrid[x, y];
+                    int currType = curr.stageType;
+                    
+                    // 규칙에서 중복되면 안 되는 방들
+                    if(currType == 1 || currType == 3 || currType == 4)
+                    {
+                        // 현재 노드에서 다음 경로에 존재하는 방을 순회
+                        foreach(var nextNode in curr.nextButton)
+                        {
+                            // 만약 현재 방과 다음 경로에 존재하는 방의 타입이 같을 경우 진입
+                            if(nextNode.stageType == currType)
+                            {
+                                int nx = nextNode.x;
+                                int nt = nextNode.stageType;
+
+                                // 이미 해당 인덱스에 피해야할 값이 들어있다면 무시
+                                if (!changeNode[nx].Contains(nt))
+                                {
+                                    changeNode[nx].Add(nt);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 현재 방들과 중복되는 다음 경로 방이 존재하면 변경 시작
+            for(int x = 0; x < col; x++)
+            {
+                if (nodeGrid[x, y + 1].isSelected)
+                {
+                    Node nextNode = nodeGrid[x, y + 1];
+                    int newType = nextNode.stageType;
+                    if (changeNode[x].Contains(newType))
+                    {
+                        Destroy(nextNode.buttonPrefab);
+                        nextNode.buttonPrefab = null;
+
+                        while (changeNode[x].Contains(newType))
+                        {
+                            Debug.Log("변경됨");
+                            newType = chooseType(y + 1);
+                        }
+
+                        nextNode.stageType = newType;
+                        nextNode.buttonPrefab = Instantiate(buttons[newType], gridPanel);
+                        nextNode.buttonPrefab.transform.position = nextNode.position;
+                        StageBaseButton buttonComponent = nextNode.buttonPrefab.GetComponent<StageBaseButton>();
                         if (buttonComponent != null)
                         {
                             buttonComponent.SetMapGenerator(x, y, this);
