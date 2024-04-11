@@ -22,17 +22,17 @@ public class StageBaseButton : MonoBehaviour
         // 선택 가능한 버튼에 한하여
         while (stageEnable)
         {
-            // 1초가 크기 키움
+            // 1초간 크기 키움
             for(float i = 0; i <= 1f; i+= Time.deltaTime)
             {
-                transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 1.3f, i);
+                transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 1.6f, i);
                 yield return null;
             }
 
-            // 1초가 크기 작게
+            // 1초간 크기 작게
             for(float i = 0; i <= 1f; i += Time.deltaTime)
             {
-                transform.localScale = Vector3.Lerp(Vector3.one * 1.3f, Vector3.one, i);
+                transform.localScale = Vector3.Lerp(Vector3.one * 1.6f, Vector3.one, i);
                 yield return null;
             }
         }

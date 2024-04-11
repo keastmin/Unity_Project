@@ -67,7 +67,7 @@ public class MApGenerator : MonoBehaviour
         GeneratePaths();        // 경로 생성
         pathLine();             // 실선 그리기
         CreateButton();         // 버튼 생성
-        EditRoom();             // 버튼 수정
+        consecutiveEdit();      // 버튼 수정
         FirstFloorEnable();     // 첫번째 층 활성화
     }
 
@@ -99,9 +99,12 @@ public class MApGenerator : MonoBehaviour
         }
     }
 
-
+    // 다음 노드 활성화 및 그 외의 노드 비활성화
     public void OnNodeCleared(int x, int y)
     {
+        Debug.Log("다음 경로의 수는 = " + nodeGrid[x, y].nextButton.Count);
+
+        // 모든 노드 비활성화
         foreach(Node node in nodeGrid)
         {
             if(node.buttonPrefab != null)
@@ -115,6 +118,7 @@ public class MApGenerator : MonoBehaviour
             }
         }
 
+        // 현재 위치하는 인덱스의 노드를 클리어 한 노드로 두고 그 노드의 다음 경로에 존재하는 노드들 활성화
         Node clearedNode = nodeGrid[x, y];
         foreach(Node nextNode in clearedNode.nextButton)
         {
@@ -125,9 +129,10 @@ public class MApGenerator : MonoBehaviour
                 {
                     nextButtonComponent.stageEnable = true;
                     nextButtonComponent.SetStageEnable(true);
+                    Debug.Log((nextNode.x) + " " + (nextNode.y) + "현재 노드 활성화 작동 완료");
                 }
             }
-        }
+        } 
     }
 
     void CreateGrid()
@@ -184,13 +189,20 @@ public class MApGenerator : MonoBehaviour
 
             for (int y = 0; y < row - 1; y++) // 모든 층을 탐색
             {
+                // 다음 경로로 가능한 다음 층의 X 인덱스를 저장할 리스트
                 List<int> possibleX = new List<int>();
+
+                // ※규칙: 경로끼리는 X자로 교차되어서는 안된다. 그것을 위한 if문
+
+                // 현재 인덱스 X가 0보다 클 때, 현재 인덱스에서 왼쪽 위의 경로를 선택할 수 있는지 검사하는 조건문
                 if (currentX > 0)
                 {
+                    // 현재보다 왼쪽의 노드가 경로로서 선택된 적이 있는 노드일 경우
                     if (nodeGrid[currentX - 1, y].isSelected)
                     {
                         bool check = true;
 
+                        // 왼쪽의 노드와 현재 선택된 노드의 다음 경로들이 X자로 교차될 수 있는지 검사
                         for (int k = 0; k < nodeGrid[currentX - 1, y].nextButton.Count; k++)
                         {
                             if (nodeGrid[currentX - 1, y].nextButton[k].position == nodeGrid[currentX, y + 1].position)
@@ -210,13 +222,19 @@ public class MApGenerator : MonoBehaviour
                         possibleX.Add(currentX - 1);
                     }
                 }
+
+                // 현재 인덱스에서 바로 위는 X자로 교차될 일이 없으므로 무조건 선택
                 possibleX.Add(currentX);
+
+                // 현재 인덱스 X가 6보다 작을 때, 현재 인덱스에서 오른쪽 위의 경로를 선택할 수 있는지 검사하는 조건문
                 if (currentX < 6)
                 {
+                    // 현재보다 오른쪽의 노드가 경로로서 선택된 적이 있는 노드일 경우
                     if (nodeGrid[currentX + 1, y].isSelected)
                     {
                         bool check = true;
 
+                        // 오른쪽의 노드와 현재 선택된 노드의 다음 경로들이 X자로 교차될 수 있는지 검사
                         for (int k = 0; k < nodeGrid[currentX + 1, y].nextButton.Count; k++)
                         {
                             if (nodeGrid[currentX + 1, y].nextButton[k].position == nodeGrid[currentX, y + 1].position)
@@ -237,6 +255,7 @@ public class MApGenerator : MonoBehaviour
                     }
                 }
 
+                // 
                 int prevX = currentX;
                 currentX = possibleX[Random.Range(0, possibleX.Count)];
                 if (!nodeGrid[prevX, y].nextButton.Contains(nodeGrid[currentX, y + 1]))
@@ -323,79 +342,6 @@ public class MApGenerator : MonoBehaviour
         return 0;
     }
 
-    private void EditRoom()
-    {
-        //underSixFloor();
-        //fourTeenFloor();
-        consecutiveEdit();
-    }
-
-    private void underSixFloor()
-    {
-        for(int x = 0; x < col; x++)
-        {
-            for(int y = 1; y < 5; y++)
-            {
-                if (nodeGrid[x, y].isSelected)
-                {
-                    int type = nodeGrid[x, y].stageType;
-
-                    if (type == 1 || type == 3)
-                    {
-                        Destroy(nodeGrid[x, y].buttonPrefab);
-                        nodeGrid[x, y].buttonPrefab = null;
-
-                        while (type == 1 || type == 3)
-                        {
-                            type = chooseType(y);
-                        }
-
-                        nodeGrid[x, y].stageType = type;
-                        nodeGrid[x, y].buttonPrefab = Instantiate(buttons[type], gridPanel);
-                        nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
-                        StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
-                        if (buttonComponent != null)
-                        {
-                            buttonComponent.SetMapGenerator(x, y, this);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void fourTeenFloor()
-    {
-        for(int x = 0; x < col; x++)
-        {
-            if (nodeGrid[x, 13].isSelected)
-            {
-                int type = nodeGrid[x, 13].stageType;
-
-                if(type == 1)
-                {
-                    Destroy(nodeGrid[x, 13].buttonPrefab);
-                    nodeGrid[x, 13].buttonPrefab = null;
-
-                    while(type == 1)
-                    {
-                        type = chooseType(13);
-                    }
-
-                    nodeGrid[x, 13].stageType = type;
-                    nodeGrid[x, 13].buttonPrefab = Instantiate(buttons[type], gridPanel);
-                    nodeGrid[x, 13].buttonPrefab.transform.position = nodeGrid[x, 13].position;
-                    StageBaseButton buttonComponent = nodeGrid[x, 13].buttonPrefab.GetComponent<StageBaseButton>();
-                    if (buttonComponent != null)
-                    {
-                        buttonComponent.SetMapGenerator(x, 13, this);
-                    }
-
-                }
-            }
-        }
-    }
-
     private void consecutiveEdit()
     {
         // 최하층부터 마지막에서 바로 전 층까지 순회
@@ -476,7 +422,7 @@ public class MApGenerator : MonoBehaviour
                         StageBaseButton buttonComponent = nextNode.buttonPrefab.GetComponent<StageBaseButton>();
                         if (buttonComponent != null)
                         {
-                            buttonComponent.SetMapGenerator(x, y, this);
+                            buttonComponent.SetMapGenerator(x, y + 1, this);
                         }
                     }
                 }
