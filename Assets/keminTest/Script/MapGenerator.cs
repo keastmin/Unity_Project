@@ -208,16 +208,8 @@ public class MApGenerator : MonoBehaviour
                 }
                 tmp.Add(currentX);
             }
-        
-            // 기즈모를 통한 경로 디버깅, 경로마다 색상을 다르게 부여
-            Color newColor;
-            do
-            {
-                newColor = Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f);
-            } while (usedColors.Contains(newColor));
-            usedColors.Add(newColor);
-            pathColors.Add(newColor);
-            paths.Add(tmp); //경로간의 실선을 표현하기 위한 리스트
+
+            paths.Add(tmp);
         }
 
         // 버튼 생성
