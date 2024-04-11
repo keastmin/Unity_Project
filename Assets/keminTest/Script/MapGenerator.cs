@@ -110,7 +110,7 @@ public class MApGenerator : MonoBehaviour
                 // 셀 위치를 배열에 저장
                 Vector2 position = new Vector2(posX, posY);
                 gridPositions[x, y] = position;
-                nodeGrid[x, y] = new Node(position, x, y);
+                nodeGrid[x, y] = new Node(position, x, y); 
             }
         }
     }
@@ -141,6 +141,8 @@ public class MApGenerator : MonoBehaviour
             for (int y = 0; y < row - 1; y++) // 모든 층을 탐색
             {
                 List<int> possibleX = new List<int>();
+
+                //현재 선택된 노드에서 왼쪽 위
                 if (currentX > 0)
                 {
                     if (nodeGrid[currentX - 1, y].isSelected)
@@ -166,7 +168,10 @@ public class MApGenerator : MonoBehaviour
                         possibleX.Add(currentX - 1);
                     }
                 }
+                //현재 선택된 노드에서 바로 위
                 possibleX.Add(currentX);
+
+                //현재 선택된 노드에서 오른쪽 위
                 if (currentX < 6)
                 {
                     if (nodeGrid[currentX + 1, y].isSelected)
@@ -195,6 +200,7 @@ public class MApGenerator : MonoBehaviour
 
                 int prevX = currentX;
                 currentX = possibleX[Random.Range(0, possibleX.Count)];
+
                 if (!nodeGrid[prevX, y].nextButton.Contains(nodeGrid[currentX, y + 1]))
                 {
                     nodeGrid[prevX, y].nextButton.Add(nodeGrid[currentX, y + 1]);
@@ -211,7 +217,7 @@ public class MApGenerator : MonoBehaviour
             } while (usedColors.Contains(newColor));
             usedColors.Add(newColor);
             pathColors.Add(newColor);
-            paths.Add(tmp);
+            paths.Add(tmp); //경로간의 실선을 표현하기 위한 리스트
         }
 
         // 버튼 생성
