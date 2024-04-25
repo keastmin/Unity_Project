@@ -21,9 +21,9 @@ public class PlayerSc : MonoBehaviour
     public int maxHealth; // 최대체력
     public int block; // 방어
 
-    private List<BuffType> buffs = new List<BuffType>();
+    public List<BuffType> buffs = new List<BuffType>();
 
-    void Start()
+    void Awake()
     {
         instance = this;
         InitializePlayer(); // 플레이어 초기화
@@ -63,6 +63,7 @@ public class PlayerSc : MonoBehaviour
     {
         // 덱 초기화
         // 핸드 초기화
+        instance = this;
         maxHealth = 100;
         energy = 3; // 에너지
         health = maxHealth; // 체력

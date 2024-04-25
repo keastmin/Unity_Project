@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class CardManager : MonoBehaviour
 {
-   
+    public Text deckNumberText; // 남은 덱 수
+    public Text usedDeckNumberText; // 사용한 덱 수
 
     // 카드 덱
-    private List<Card> deck = new List<Card>();
+    public List<Card> deck = new List<Card>();
 
     // 사용된 카드 덱
-    private List<Card> usedDeck = new List<Card>();
+    public List<Card> usedDeck = new List<Card>();
 
     // 카드 매니저 인스턴스
     private static CardManager instance;
@@ -28,6 +31,12 @@ public class CardManager : MonoBehaviour
             }
             return instance;
         }
+    }
+
+    private void Update()
+    {
+        deckNumberText.text = deck.Count.ToString();
+        usedDeckNumberText.text = usedDeck.Count.ToString();
     }
 
     // 카드 덱 초기화
@@ -73,7 +82,11 @@ public class CardManager : MonoBehaviour
     {
         usedDeck.Remove(card);
     }
-
     // 게임 중 카드 사용에 필요한 추가적인 기능을 구현할 수 있습니다.
+
+    public void DrawClick()
+    {
+        DrawCard();
+    }
 }
 
