@@ -1,92 +1,111 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class CardManager : MonoBehaviour
 {
-    public Text deckNumberText; // 남은 덱 수
-    public Text usedDeckNumberText; // 사용한 덱 수
+    public bool isGame;
 
-    // 카드 덱
-    public List<Card> deck = new List<Card>();
+    public RectTransform cardPosition;
 
-    // 사용된 카드 덱
-    public List<Card> usedDeck = new List<Card>();
+    public List<GameObject> allCards; // 모든 카드 모음집
+    public List<GameObject> playerCards; // 플레이어가 소유한 카드 모음집
+    public List<GameObject> beforeUseCards; // 플레이어가 사용하기 전 카드 모음집
+    public List<GameObject> handCards; // 플레이가 손에 들고 있는 카드 모음집
+    public List<GameObject> usedCards; // 플레이어가 사용한 카드 모음집
 
-    // 카드 매니저 인스턴스
-    private static CardManager instance;
-    public static CardManager Instance
+    public int maxHand;
+    private void Start()
     {
-        get
+        Init(); // 초기화 함수 호출
+    }
+
+    private void Init()
+    {
+        maxHand = 5;
+        for (int i = 0; i < 20; i++)
         {
-            if (instance == null)
+            playerCards.Add(allCards[0]);
+        }
+
+        beforeUseCards = new List<GameObject>(playerCards); // playerCards를 beforeUseCards에 복사
+        DrawStartingHand(); // 시작 손 패 뽑기
+    }
+
+    public void DrawStartingHand()
+    {
+        for (int i = 0; i < maxHand; i++)
+        {
+            DrawCard(); // 카드 뽑기
+        }
+    }
+
+    public void DrawCard()
+    {
+        if (beforeUseCards.Count == 0)
+        {
+            if (usedCards.Count > 0)
             {
-                instance = FindObjectOfType<CardManager>();
-                if (instance == null)
-                {
-                    GameObject obj = new GameObject("CardManager");
-                    instance = obj.AddComponent<CardManager>();
-                }
+                ShuffleCards(); // usedCards를 섞어서 beforeUseCards로 이동
             }
-            return instance;
+            else
+            {
+                Debug.LogWarning("더 이상 카드가 없습니다!"); // 더 이상 카드가 없음을 경고
+                return;
+            }
         }
+
+        GameObject drawnCard = beforeUseCards[0]; // 덱의 맨 위 카드 뽑기
+        beforeUseCards.RemoveAt(0); // 뽑은 카드를 beforeUseCards에서 제거
+        handCards.Add(drawnCard); // 뽑은 카드를 플레이어 손에 추가
+
+        // 카드 생성 및 정렬 함수 호출
+        PlaceCard(drawnCard);
+
+        Debug.Log("플레이어가 카드를 뽑았습니다: " + drawnCard.name); // 카드를 뽑았음을 디버그
     }
 
-    private void Update()
+    private void PlaceCard(GameObject card)
     {
-        deckNumberText.text = deck.Count.ToString();
-        usedDeckNumberText.text = usedDeck.Count.ToString();
+        // 거리(offset)를 정의합니다.
+        float offset = 50f; // 필요에 따라 값을 조정하세요
+
+        // 새 위치를 계산합니다. 
+        // 각 카드 사이의 거리를 조절하기 위해 이미 손에 있는 카드의 수에 offset을 곱합니다.
+        Vector3 newPosition = cardPosition.position + new Vector3(offset * handCards.Count - 990, 0f, 0f);
+
+        // 새 위치에 카드를 생성합니다.
+        GameObject newCard = Instantiate(card, newPosition, Quaternion.identity);
+
+        // 카드를 cardPosition의 자식으로 설정합니다.
+        newCard.transform.SetParent(cardPosition, false);
     }
 
-    // 카드 덱 초기화
-    public void InitializeDeck(List<Card> cards)
-    {
-        deck.Clear();
-        usedDeck.Clear();
-        deck.AddRange(cards);
-        ShuffleDeck();
-    }
 
-    // 카드 덱을 섞는 메서드
-    private void ShuffleDeck()
+    private void ShuffleCards()
     {
-        for (int i = 0; i < deck.Count; i++)
+        int n = usedCards.Count;
+        while (n > 1)
         {
-            Card temp = deck[i];
-            int randomIndex = Random.Range(i, deck.Count);
-            deck[i] = deck[randomIndex];
-            deck[randomIndex] = temp;
+            n--;
+            int k = Random.Range(0, n + 1);
+            GameObject temp = usedCards[k];
+            usedCards[k] = usedCards[n];
+            usedCards[n] = temp;
         }
+
+        beforeUseCards.AddRange(usedCards); // usedCards를 beforeUseCards에 추가
+        usedCards.Clear(); // usedCards 비우기
+
+        Debug.Log("카드를 섞어서 다시 사용되기 전 카드로 이동했습니다.");
     }
 
-    // 카드를 뽑는 메서드
-    public Card DrawCard()
+    public void EndTurn()
     {
-        if (deck.Count == 0)
+        foreach (var card in handCards)
         {
-            // 카드 덱이 비어있을 때 새로 섞어서 사용된 카드 덱을 카드 덱으로 옮김
-            deck.AddRange(usedDeck);
-            usedDeck.Clear();
-            ShuffleDeck();
+            usedCards.Add(card); // 손에 있는 카드들을 usedCards에 추가
         }
-
-        Card drawnCard = deck[0];
-        deck.RemoveAt(0);
-        usedDeck.Add(drawnCard);
-        return drawnCard;
-    }
-
-    // 사용된 카드 덱에서 카드를 제거하는 메서드
-    public void RemoveCardFromUsedDeck(Card card)
-    {
-        usedDeck.Remove(card);
-    }
-    // 게임 중 카드 사용에 필요한 추가적인 기능을 구현할 수 있습니다.
-
-    public void DrawClick()
-    {
-        DrawCard();
+        handCards.Clear(); // handCards 비우기
     }
 }
-
