@@ -37,7 +37,7 @@ public class Test : MonoBehaviour
 
     Vector2[,] grid = new Vector2[7, 15];
     GameObject[,] buttons = new GameObject[7, 15];
-    GameObject[,] paths = new GameObject[7, 15];
+    List<List<int>> paths = new List<List<int>>();
     Node[,] nodeGrid = new Node[7, 15]; 
     
 
@@ -49,8 +49,9 @@ public class Test : MonoBehaviour
     void Start()
     {
         CreateGrid();
-        CreateButtons();
         GeneratePath();
+        CreateButtons();
+        
     }
 
     void CreateGrid()
@@ -84,26 +85,38 @@ public class Test : MonoBehaviour
 
     void CreateButtons()
     {
-        for (int x = 0; x < 7; x++)
+        for (int i = 0; i < col; i++)
         {
-            for (int y = 0; y < 15; y++)
+            if (nodeGrid[i, 0].isPathNode)
             {
-                Vector2 buttonPos = grid[x, y];
-                GameObject buttonObj = Instantiate(buttonPrefab, panel);
-                RectTransform buttonRect = buttonObj.GetComponent<RectTransform>();
+                Queue<Node> nodeQ = new Queue<Node>();
+                nodeQ.Enqueue(nodeGrid[i, 0]);
 
-                // 버튼의 위치 설정
-                buttonRect.anchoredPosition = buttonPos;
-                buttons[x, y] = buttonObj;
-                
+                while (nodeQ.Count > 0)
+                {
+                    Node node = nodeQ.Dequeue();
+                    int x = node.x;
+                    int y = node.y;
+
+                    if (nodeGrid[x, y].buttonPrefab != null) continue;
+
+                    nodeGrid[x, y].buttonPrefab = Instantiate(buttonPrefab, panel);
+                    nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
+                    StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+                }
             }
         }
     }
 
+
+
     void GeneratePath()
     {
         List<int> tmppathX = new List<int>();
-        for (int num = 0; num < 7; num++)
+        List<int> changeX = new List<int>();
+        List<int> possibleX = new List<int>();
+        bool check;
+        for (int num = 0; num < 6; num++)
         {
             int firstX = 0;
             int currentX = Random.Range(0, 7);
@@ -119,24 +132,76 @@ public class Test : MonoBehaviour
             }
 
             //현재 버튼의 값을 넣는다
-            nodeGrid[currentX, 0].isPathNode = true; // 변경된 변수명 반영
+            nodeGrid[currentX, 0].isPathNode = true;
             tmppathX.Add(currentX);
 
-            for (int y = 0; y < row; y++)
+            for (int y = 0; y < row -1; y++)
             {
-                List<int> PossibleX = new List<int>();
+                
 
                 if(currentX > 0)
                 {
+
                     if (nodeGrid[currentX - 1, y].isPathNode)
                     {
-                        bool check = true;
+                        check = true;
 
-                        
+                        for (int k = 0; k < nodeGrid[currentX - 1, y].nextButton.Count; k++)
+                        {
+                            if (nodeGrid[currentX - 1, y].nextButton[k] == nodeGrid[currentX, y + 1])
+                            {
+                                check = false;
+                                changeX.Add(currentX - 1);
+                                break;
+                                
+                            }
+                        }
+
+                        if (check)
+                        {
+                            possibleX.Add(currentX - 1);
+                        }
+
                     }
-                }
-            }
 
+                    else
+                    {
+                        possibleX.Add(currentX - 1);
+                    }
+                    
+                }
+
+                //어떤 조건에도 걸리지 않음
+                possibleX.Add(currentX);
+
+                if(currentX > row -1)
+                {
+                    check = true;
+
+                    for (int k = 0; k < nodeGrid[currentX, y-1].nextButton.Count; k++)
+                    {
+                        if (nodeGrid[currentX, y].nextButton[k] == nodeGrid[currentX, y -1])
+                        {
+                            check = false;
+                            changeX.Add(currentX);
+                            break;
+
+                        }
+                    }
+
+                    if (check)
+                    {
+                        possibleX.Add(currentX);
+                    }
+
+                }
+
+                else
+                {
+                    possibleX.Add(currentX);
+                }
+                
+            }
 
         }
 
