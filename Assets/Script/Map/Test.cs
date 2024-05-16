@@ -34,26 +34,28 @@ public class Test : MonoBehaviour
     public GameObject buttonPrefab;
     public RectTransform panel;
     //private List<List<Vector2>> paths = new List<List<Vector2>>();
+    MapGenerator mapGenerator;
 
     Vector2[,] grid = new Vector2[7, 15];
     GameObject[,] buttons = new GameObject[7, 15];
-    GameObject[,] paths = new GameObject[7, 15];
-    Node[,] nodeGrid = new Node[7, 15]; 
-    
+    List<List<int>> paths = new List<List<int>>();
+    Node[,] nodeGrid = new Node[7, 15];
+
 
 
     int col = 7;
     int row = 15;
     //List<GameObject> buttons = new List<GameObject>();
-    
+
     void Start()
     {
-        CreateGrid();
+        GenerateGrid();
+        CreatePath();
         CreateButtons();
-        GeneratePath();
+
     }
 
-    void CreateGrid()
+    void GenerateGrid()
     {
         RectTransform gridRectTransform = panel.GetComponent<RectTransform>();
         float panelWidth = gridRectTransform.rect.width;    // 판넬의 너비
@@ -84,26 +86,49 @@ public class Test : MonoBehaviour
 
     void CreateButtons()
     {
-        for (int x = 0; x < 7; x++)
+        for (int i = 0; i < col; i++)
         {
-            for (int y = 0; y < 15; y++)
+            //첫 번째 층
+            if (nodeGrid[i, 0].isPathNode)
             {
-                Vector2 buttonPos = grid[x, y];
-                GameObject buttonObj = Instantiate(buttonPrefab, panel);
-                RectTransform buttonRect = buttonObj.GetComponent<RectTransform>();
+                Queue<Node> nodeQ = new Queue<Node>();
+                nodeQ.Enqueue(nodeGrid[i, 0]);
 
-                // 버튼의 위치 설정
-                buttonRect.anchoredPosition = buttonPos;
-                buttons[x, y] = buttonObj;
-                
+                while (nodeQ.Count > 0)
+                {
+                    Node node = nodeQ.Dequeue();
+                    int x = node.x;
+                    int y = node.y;
+
+                    if (nodeGrid[x, y].buttonPrefab != null) continue;
+
+                    nodeGrid[x, y].buttonPrefab = Instantiate(buttonPrefab, panel);
+                    nodeGrid[x, y].buttonPrefab.transform.position = nodeGrid[x, y].position;
+                    StageBaseButton buttonComponent = nodeGrid[x, y].buttonPrefab.GetComponent<StageBaseButton>();
+
+                    if (buttonComponent != null)
+                    {
+                        //buttonComponent.SetMapGenerator(x, y, mapGenerator);
+                    }
+
+                    foreach (var nextNode in node.nextButton)
+                    {
+                        nodeQ.Enqueue(nextNode);
+                    }
+                }
             }
         }
     }
 
-    void GeneratePath()
+
+
+    void CreatePath()
     {
         List<int> tmppathX = new List<int>();
-        for (int num = 0; num < 7; num++)
+        List<int> changeX = new List<int>();
+        List<int> possibleX = new List<int>();
+        bool check;
+        for (int num = 0; num < 6; num++)
         {
             int firstX = 0;
             int currentX = Random.Range(0, 7);
@@ -119,34 +144,85 @@ public class Test : MonoBehaviour
             }
 
             //현재 버튼의 값을 넣는다
-            nodeGrid[currentX, 0].isPathNode = true; // 변경된 변수명 반영
+            nodeGrid[currentX, 0].isPathNode = true;
             tmppathX.Add(currentX);
 
-            for (int y = 0; y < row; y++)
+            for (int y = 0; y < row - 1; y++)
             {
-                List<int> PossibleX = new List<int>();
 
-                if(currentX > 0)
+                if (currentX > 0)
                 {
-                    if (nodeGrid[currentX - 1, y].isPathNode)
-                    {
-                        bool check = true;
 
-                        
+                    if (nodeGrid[currentX - 1, y].isPathNode)//패스에 있다면
+                    {
+                        check = true;
+
+                        for (int k = 0; k < nodeGrid[currentX - 1, y].nextButton.Count; k++)
+                        {
+                            if (nodeGrid[currentX - 1, y].nextButton[k] == nodeGrid[currentX, y + 1])
+                            {
+                                check = false;
+                                changeX.Add(currentX - 1);
+                                break;
+
+                            }
+                        }
+
+                        if (check)
+                        {
+                            possibleX.Add(currentX - 1);
+                        }
+
+                    }
+
+                    else
+                    {
+                        possibleX.Add(currentX - 1);
+                    }
+
+                }
+
+                //어떤 조건에도 걸리지 않음
+                possibleX.Add(currentX);
+
+                if (currentX < 6)
+                {
+                    if (nodeGrid[currentX + 1, y].isPathNode)
+                    {
+                        check = true;
+
+                        // 오른쪽의 노드와 현재 선택된 노드의 다음 경로들이 X자로 교차될 수 있는지 검사
+                        for (int k = 0; k < nodeGrid[currentX + 1, y].nextButton.Count; k++)
+                        {
+                            if (nodeGrid[currentX + 1, y].nextButton[k].position == nodeGrid[currentX, y + 1].position)
+                            {
+                                check = false;
+                                break;
+                            }
+                        }
+
+                        if (check)
+                        {
+                            possibleX.Add(currentX + 1);
+                        }
+                    }
+                    else
+                    {
+                        possibleX.Add(currentX + 1);
                     }
                 }
+                int prevX = currentX;
+                currentX = possibleX[Random.Range(0, possibleX.Count)];
+                //이전 노드에서 현재 노드로의 경로가 이미 존재하는지 여부
+                if (!nodeGrid[prevX, y].nextButton.Contains(nodeGrid[currentX, y + 1]))
+                {
+                    nodeGrid[prevX, y].nextButton.Add(nodeGrid[currentX, y + 1]);
+                    nodeGrid[currentX, y + 1].isPathNode = true;
+                }
+                tmppathX.Add(currentX);
             }
-
-
+            paths.Add(tmppathX);
         }
 
-        //    if (currentX == firstX)
-        //        currentX = Random.Range(0, 7);
-
-        //    tmppathX.Add(currentX);
-
     }
-       
-        
-    
 }
