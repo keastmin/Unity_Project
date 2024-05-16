@@ -568,8 +568,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689f54d6aa30c7445a696613694af1e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonPrefab: {fileID: 3593051321010182334, guid: d42d26b7e596aaf4ba223fd0cc769cd4, type: 3}
-  panel: {fileID: 712742204}
+  buttonPrefab: {fileID: 0}
+  panel: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
