@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreateMap : MonoBehaviour
+namespace keastmin
 {
-    // Start is called before the first frame update
-    void Start()
+    public class CreateMap : MonoBehaviour
     {
-        
-    }
+        StageNode[][] nodegrid;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Start()
+        {
+
+        }
     }
 }

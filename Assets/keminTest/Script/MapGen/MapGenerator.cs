@@ -12,7 +12,7 @@ public class MApGenerator : MonoBehaviour
     public class Node
     {
         // 위치
-        public Vector2 position;
+        public Vector2 position; 
         // 인덱스
         public int x;
         public int y;
