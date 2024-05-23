@@ -34,7 +34,7 @@ public class Test : MonoBehaviour
     public GameObject buttonPrefab;
     public RectTransform panel;
     //private List<List<Vector2>> paths = new List<List<Vector2>>();
-    MapGenerator mapGenerator;
+    //MapGenerator mapGenerator;
 
     Vector2[,] grid = new Vector2[7, 15];
     GameObject[,] buttons = new GameObject[7, 15];
