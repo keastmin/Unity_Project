@@ -13,10 +13,10 @@ namespace keastmin
         {
             NoneNode,
             NormalNode,
-            EliteNode,
             EventNode,
-            ShopNode,
+            EliteNode,
             RestNode,
+            ShopNode,
             ChestNode
         }
 
@@ -70,6 +70,19 @@ namespace keastmin
             this.floor = floor;
             this.selectEnable = select;
             this.nextNode = new List<StageNode>();
+        }
+
+        public void OnClickNextStageInfo()
+        {
+            //Debug.Log("현재 층과 위치: " + this.floor + " " + this.x);
+
+            //Debug.Log(this.nextNode.Count);
+            //foreach(StageNode next in this.nextNode)
+            //{
+            //    Debug.Log(next.floor + " " + next.x);
+            //}
+
+            Debug.Log(this.selectEnable);
         }
     }
 }

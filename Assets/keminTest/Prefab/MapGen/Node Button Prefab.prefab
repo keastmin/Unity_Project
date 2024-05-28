@@ -120,7 +120,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8135206570867444150}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -5527781225847026123}
+        m_TargetAssemblyTypeName: keastmin.StageNode, Assembly-CSharp
+        m_MethodName: OnClickNextStageInfo
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &-5527781225847026123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,13 +148,14 @@ MonoBehaviour:
   nodeSprite: {fileID: 0}
   nextNode: []
   selectEnable: 0
+  x: 0
   floor: 0
   sprites:
   - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 21300000, guid: 40eaf106ab57360478ed80dcf4543ef1, type: 3}
-  - {fileID: 21300000, guid: e08eba0b1e7f58e4c841ea4e73940738, type: 3}
   - {fileID: 21300000, guid: d4797d1c561581a4bb3242fdaee8d690, type: 3}
-  - {fileID: 21300000, guid: 15644fbf2046e034ba9a5353ea07575a, type: 3}
+  - {fileID: 21300000, guid: e08eba0b1e7f58e4c841ea4e73940738, type: 3}
   - {fileID: 21300000, guid: c54b35c5f010d7949b7827e1031ef721, type: 3}
+  - {fileID: 21300000, guid: 15644fbf2046e034ba9a5353ea07575a, type: 3}
   - {fileID: 21300000, guid: 2c6ea81ca8ed4e841a668c3881354462, type: 3}
   _nodeType: 0
