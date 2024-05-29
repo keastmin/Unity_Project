@@ -1,8 +1,10 @@
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace keastmin
 {
@@ -37,7 +39,7 @@ namespace keastmin
         void Start()
         {
             // public 변수 할당 검사
-            if(stagePanel == null || stageButton == null)
+            if (stagePanel == null || stageButton == null)
             {
                 Debug.LogError("맵 생성에 필요한 오브젝트가 없습니다. " + this.name, this);
             }
@@ -70,9 +72,9 @@ namespace keastmin
 
             positionGrid = new Vector2[col, row];
             stageNodeGrid = new StageNode[col, row];
-            for(int x = 0; x < col; x++)
+            for (int x = 0; x < col; x++)
             {
-                for(int y = 0; y < row; y++)
+                for (int y = 0; y < row; y++)
                 {
                     float posX = startX + x * spacingX;
                     float posY = startY + y * spacingY;
@@ -92,7 +94,7 @@ namespace keastmin
             // 첫 번째 선택 인덱스와 두 번째 선택 인덱스의 중복을 막기 위한 변수
             int firstStart = 0;
 
-            for(int paths = 0; paths < 6; paths++)
+            for (int paths = 0; paths < 6; paths++)
             {
                 // 시작 위치 인덱스 랜덤 선택
                 int x = Random.Range(0, col);
@@ -100,9 +102,9 @@ namespace keastmin
 
                 // 최소한 두 개의 시작 위치를 보장
                 if (paths == 0) firstStart = x;
-                else if(paths == 1)
+                else if (paths == 1)
                 {
-                    while(x == firstStart)
+                    while (x == firstStart)
                     {
                         x = Random.Range(0, col);
                     }
@@ -115,7 +117,7 @@ namespace keastmin
                 }
 
                 // 경로 선택 시작
-                for(y = 1; y < row; y++)
+                for (y = 1; y < row; y++)
                 {
                     // 이전 인덱스 저장
                     int prevX = x;
@@ -124,16 +126,16 @@ namespace keastmin
                     List<int> possibleIndex = new List<int>() { x };
 
                     // X자로 겹치는 경로를 제외하고 리스트에 인덱스 저장
-                    if(x < col - 1)
+                    if (x < col - 1)
                     {
-                        if(CheckPathCross(x, x + 1, prevY))
+                        if (CheckPathCross(x, x + 1, prevY))
                         {
                             possibleIndex.Add(x + 1);
                         }
                     }
-                    if(x > 0)
+                    if (x > 0)
                     {
-                        if(CheckPathCross(x, x - 1, prevY))
+                        if (CheckPathCross(x, x - 1, prevY))
                         {
                             possibleIndex.Add(x - 1);
                         }
@@ -148,13 +150,15 @@ namespace keastmin
                     {
                         StageNode nextPath = CreateButton(x, y);
                         stageNodeGrid[prevX, prevY].nextNode.Add(nextPath);
+                        nextPath.prevNode.Add(stageNodeGrid[prevX, prevY]);
                     }
                     else
                     {
-                        if (CheckPathAlready(prevX, prevY, x, y))
+                        if (!CheckPathAlready(prevX, prevY, x, y))
                         {
                             StageNode nextPath = stageNodeGrid[x, y];
                             stageNodeGrid[prevX, prevY].nextNode.Add(nextPath);
+                            nextPath.prevNode.Add(stageNodeGrid[prevX, prevY]);
                         }
                     }
                 }
@@ -186,10 +190,10 @@ namespace keastmin
             {
                 if (node.x == selectX && node.floor == selectY)
                 {
-                    return false;
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
         // 버튼 생성 함수
@@ -222,8 +226,6 @@ namespace keastmin
         /// </summary>
         void NodeEdit()
         {
-            bool iterCheck = true; // 노드를 수정하는 것을 다시 반복할지 결정
-
             // 규칙 준수에 필요한 노드의 번호
             int eliteNode = NodePreset.GetEliteNodeNum();
             int restNode = NodePreset.GetRestNodeNum();
@@ -231,105 +233,115 @@ namespace keastmin
 
             // 시작 노드들의 리스트
             List<StageNode> startNodes = new List<StageNode>();
-
-            for(int i = 0; i < col; i++)
+            for (int i = 0; i < col; i++)
             {
                 if (stageNodeGrid[i, 0] != null)
                 {
                     startNodes.Add(stageNodeGrid[i, 0]);
                 }
             }
-            int c = 0;
-            while(iterCheck)
+
+            for (int i = 0; i < startNodes.Count; i++)
             {
-                c++;
+                // BFS를 통한 노드 규칙 검사
+                Queue<StageNode> nodeQueue = new Queue<StageNode>();
+                nodeQueue.Enqueue(startNodes[i]);
 
-                iterCheck = false;
-
-                for(int i = 0; i < startNodes.Count; i++)
+                while (nodeQueue.Count > 0)
                 {
-                    // BFS를 통한 노드 규칙 검사
-                    Queue<StageNode> nodeQueue = new Queue<StageNode>();
-                    nodeQueue.Enqueue(startNodes[i]);
+                    // 변경할 때, 제외해야 할 노드 타입 해쉬
+                    HashSet<int> changeNodeHash = new HashSet<int>();
+                    StageNode currNode = nodeQueue.Dequeue();
+                    int currFloor = currNode.floor;
 
-                    while(nodeQueue.Count > 0)
+                    if (currFloor != 0 && currFloor != 8 && currFloor != 14)
                     {
-                        // 변경할 때, 제외해야 할 노드 타입 리스트
-                        List<int> changeNodeList = new List<int>();
-                        StageNode currNode = nodeQueue.Dequeue();
-                        int currFloor = currNode.floor;
+                        int type = (int)currNode.nodeType;
 
-                        if(currFloor != 0 && currFloor != 8 && currFloor != 14)
+                        // 규칙 1
+                        if (currFloor < 5)
                         {
-                            int rule;
-
-                            // 규칙 1
-                            if(currFloor < 5)
-                            {
-                                rule = Rule_1(eliteNode, restNode, (int)currNode.nodeType);
-                                if (rule != -1)
-                                {
-                                    changeNodeList.Add(rule);
-                                    iterCheck = true;
-                                }
-                            }
-
-                            // 규칙 2
-                            int type = (int)currNode.nodeType;
-                            if (type == eliteNode || type == restNode || type == shopNode)
-                            {
-                                rule = Rule_2(currNode);
-                                if (rule != -1)
-                                {
-                                    changeNodeList.Add(rule);
-                                    iterCheck = true;
-                                }
-                            }
-
-                            // 규칙 3
+                            Rule_1(eliteNode, restNode, type, changeNodeHash);
                         }
 
-                        // 노드 변환
-                        if (iterCheck)
+                        // 규칙 2
+                        if (type == eliteNode || type == restNode || type == shopNode)
                         {
-                            //Debug.Log("작동");
+                            Rule_2(eliteNode, restNode, shopNode, currNode, changeNodeHash);
+                        }
+
+                        // 규칙 3
+                        Rule_3(currNode.prevNode, changeNodeHash);
+                    }
+
+                    // 노드 변환
+                    if (changeNodeHash.Count > 0)
+                    {
+                        currNode.nodeType = NodePreset.GetRandomNodeType(currFloor);
+                        int newNodeType = (int)currNode.nodeType;
+                        while (changeNodeHash.Contains(newNodeType))
+                        {
                             currNode.nodeType = NodePreset.GetRandomNodeType(currFloor);
-                            int newNodeType = (int)currNode.nodeType;
-                            while (changeNodeList.Contains(newNodeType))
-                            {
-                                currNode.nodeType = NodePreset.GetRandomNodeType(currFloor);
-                                newNodeType = (int)currNode.nodeType;
-                            }
+                            newNodeType = (int)currNode.nodeType;
                         }
+                    }
 
-                        foreach(StageNode next in currNode.nextNode)
-                        {
-                            nodeQueue.Enqueue(next);
-                        }
+                    // 다음 경로 큐에 삽입
+                    foreach (StageNode next in currNode.nextNode)
+                    {
+                        nodeQueue.Enqueue(next);
                     }
                 }
             }
-
-            Debug.Log(c);
         }
 
-        int Rule_1(int eliteNode, int restNode, int currNodeType)
+        void Rule_1(int eliteNode, int restNode, int currNodeType, HashSet<int> changeHash)
         {
-            if (currNodeType == eliteNode) return eliteNode;
-            if (currNodeType == restNode) return restNode;
-            return -1;
-        }
-
-        int Rule_2(StageNode node)
-        {
-            foreach(StageNode next in node.nextNode)
+            if (currNodeType == eliteNode || currNodeType == restNode)
             {
-                if(node.nodeType == next.nodeType)
+                changeHash.Add(eliteNode);
+                changeHash.Add(restNode);
+            }
+        }
+
+        void Rule_2(int eliteNode, int restNode, int shopNode, StageNode node, HashSet<int> changeHash)
+        {
+            bool check;
+            check = Rule_2_Check(node, node.nextNode);
+            if (!check) check = Rule_2_Check(node, node.prevNode);
+
+            if (check)
+            {
+                foreach(StageNode next in node.nextNode)
                 {
-                    return (int)node.nodeType;
+                    if ((int)next.nodeType == eliteNode) changeHash.Add(eliteNode);
+                    else if ((int)next.nodeType == restNode) changeHash.Add(restNode);
+                    else if ((int)next.nodeType == shopNode) changeHash.Add(shopNode);
+                }
+                foreach(StageNode prev in node.prevNode)
+                {
+                    if ((int)prev.nodeType == eliteNode) changeHash.Add(eliteNode);
+                    else if ((int)prev.nodeType == restNode) changeHash.Add(restNode);
+                    else if ((int)prev.nodeType == shopNode) changeHash.Add(shopNode);
                 }
             }
-            return -1;
+        }
+
+        bool Rule_2_Check(StageNode node, List<StageNode> targetList)
+        {
+            foreach(StageNode target in targetList)
+            {
+                if(node.nodeType == target.nodeType)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void Rule_3(List<StageNode> prevNodes, HashSet<int> changeHash)
+        {
+
         }
 
         #endregion

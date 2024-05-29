@@ -28,6 +28,7 @@ namespace keastmin
         //public NodeType nodeType;
         public Sprite nodeSprite;
         public List<StageNode> nextNode;
+        public List<StageNode> prevNode;
         public bool selectEnable;
         public int x;
         public int floor;
@@ -70,19 +71,26 @@ namespace keastmin
             this.floor = floor;
             this.selectEnable = select;
             this.nextNode = new List<StageNode>();
+            this.prevNode = new List<StageNode>();
         }
 
         public void OnClickNextStageInfo()
         {
-            //Debug.Log("현재 층과 위치: " + this.floor + " " + this.x);
+            Debug.Log("현재 층과 위치: " + this.floor + " " + this.x);
 
-            //Debug.Log(this.nextNode.Count);
-            //foreach(StageNode next in this.nextNode)
-            //{
-            //    Debug.Log(next.floor + " " + next.x);
-            //}
+            Debug.Log("다음 경로의 수 = " + this.nextNode.Count);
+            foreach (StageNode next in this.nextNode)
+            {
+                Debug.Log(next.floor + " " + next.x);
+            }
 
-            Debug.Log(this.selectEnable);
+            Debug.Log("이전 경로의 수 = " + this.prevNode.Count);
+            foreach(StageNode prev in this.prevNode)
+            {
+                Debug.Log(prev.floor + " " + prev.x);
+            }
+
+            //Debug.Log(this.selectEnable);
         }
     }
 }
