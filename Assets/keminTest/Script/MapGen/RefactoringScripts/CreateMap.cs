@@ -1,6 +1,7 @@
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,6 +45,16 @@ namespace keastmin
                 Debug.LogError("맵 생성에 필요한 오브젝트가 없습니다. " + this.name, this);
             }
 
+            CreatePathNode();
+            StartNodeActivation();
+        }
+
+        #endregion
+
+        #region 경로 생성 알고리즘
+
+        void CreatePathNode()
+        {
             InitPositionGrid();
             GeneratePath();
             NodeEdit();
@@ -54,7 +65,7 @@ namespace keastmin
 
         #region 그리드의 위치 선언
 
-        // 그리드의 각 포지션을 정하는 함수
+        // 그리드의 각 셀의 포지션을 정하는 함수
         void InitPositionGrid()
         {
             // 패널의 크기를 기반으로 그리드의 각 셀의 위치 계산
@@ -221,7 +232,7 @@ namespace keastmin
         /// 규칙 1: 엘리트와 휴식은 5층 미만에 생성될 수 없다.
         /// 규칙 2: 엘리트, 상점, 휴식은 연속될 수 없다.
         /// 규칙 3: 하나의 방에서 2개 이상의 경로가 있다면 최소 두 개의 서로 다른 방임을 보장해야한다.
-        /// 규칙 4: 13층은 휴식일 수 없다.
+        /// 규칙 4: 13층은 휴식일 수 없다. 이는 규칙 3을 통해 해결된다.
         /// 규칙 5: 0층, 8층, 14층은 노드의 타입이 고정되어 있다. 이는 NodePreset 스크립트에서 확인 가능.
         /// </summary>
         void NodeEdit()
@@ -258,6 +269,9 @@ namespace keastmin
                     {
                         int type = (int)currNode.nodeType;
 
+                        // 규칙 3
+                        Rule_3(currNode, changeNodeHash);
+
                         // 규칙 1
                         if (currFloor < 5)
                         {
@@ -269,13 +283,15 @@ namespace keastmin
                         {
                             Rule_2(eliteNode, restNode, shopNode, currNode, changeNodeHash);
                         }
-
-                        // 규칙 3
-                        Rule_3(currNode.prevNode, changeNodeHash);
                     }
 
                     // 노드 변환
-                    if (changeNodeHash.Count > 0)
+                    if(changeNodeHash.Count >= 5)
+                    {
+                        CreatePathNode();
+                        return;
+                    }
+                    else if(changeNodeHash.Count > 0)
                     {
                         currNode.nodeType = NodePreset.GetRandomNodeType(currFloor);
                         int newNodeType = (int)currNode.nodeType;
@@ -312,17 +328,21 @@ namespace keastmin
 
             if (check)
             {
-                foreach(StageNode next in node.nextNode)
+                foreach (StageNode next in node.nextNode)
                 {
-                    if ((int)next.nodeType == eliteNode) changeHash.Add(eliteNode);
-                    else if ((int)next.nodeType == restNode) changeHash.Add(restNode);
-                    else if ((int)next.nodeType == shopNode) changeHash.Add(shopNode);
+                    int type = (int)next.nodeType;
+                    if (type == eliteNode || type == restNode || type == shopNode)
+                    {
+                        changeHash.Add(type);
+                    }
                 }
                 foreach(StageNode prev in node.prevNode)
                 {
-                    if ((int)prev.nodeType == eliteNode) changeHash.Add(eliteNode);
-                    else if ((int)prev.nodeType == restNode) changeHash.Add(restNode);
-                    else if ((int)prev.nodeType == shopNode) changeHash.Add(shopNode);
+                    int type = (int)prev.nodeType;
+                    if (type == eliteNode || type == restNode || type == shopNode)
+                    {
+                        changeHash.Add(type);
+                    }
                 }
             }
         }
@@ -339,29 +359,44 @@ namespace keastmin
             return false;
         }
 
-        void Rule_3(List<StageNode> prevNodes, HashSet<int> changeHash)
+        void Rule_3(StageNode node, HashSet<int> changeHash)
         {
+            foreach(StageNode prev in node.prevNode)
+            {
+                if (prev.nextNode.Count > 1)
+                {
+                    // 중복되는 경로의 수가 몇 개인지 확인하기 위한 해쉬셋
+                    HashSet<int> typeHash = new HashSet<int>();
 
+                    foreach (StageNode next in prev.nextNode)
+                    {
+                        typeHash.Add((int)next.nodeType);
+                    }
+
+                    if(typeHash.Count < 2)
+                    {
+                        changeHash.Add((int)node.nodeType);
+                    }
+                }
+            }
         }
 
         #endregion
 
 
-        public void OnClickRandomSprite()
+        #region 경로 잇기
+
+        void StartNodeActivation()
         {
             for(int x = 0; x < col; x++)
             {
-                for(int y = 0; y < row; y++)
+                if (stageNodeGrid[x, 0] != null)
                 {
-                    if (stageNodeGrid[x, y] != null)
-                    {
-                        //StageNode node = stageNodeGrid[x, y];
-                        //node.nodeType = NodePreset.GetRandomNodeType();
-
-                        stageNodeGrid[x, y].selectEnable = true;
-                    }
+                    stageNodeGrid[x, 0].selectEnable = true;
                 }
             }
         }
+
+        #endregion
     }
 }
