@@ -122,11 +122,18 @@ namespace keastmin
 
             if (_selectEnable)
             {
-                _selectEnable = false;
-                UpdateNodeActivation();
+                //_selectEnable = false;
+                //UpdateNodeActivation();
                 foreach(StageNode next in this.nextNode)
                 {
                     next.selectEnable = true;
+                }
+                foreach(StageNode prev in this.prevNode)
+                {
+                    foreach(StageNode stopNode in prev.nextNode)
+                    {
+                        stopNode.selectEnable = false;
+                    }
                 }
             }
 
