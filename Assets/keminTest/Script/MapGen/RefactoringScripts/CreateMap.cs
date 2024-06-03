@@ -1,11 +1,8 @@
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace keastmin
 {
@@ -23,6 +20,9 @@ namespace keastmin
         // 버튼 프리팹
         public Button stageButton;
 
+        // 버튼 사이의 라인 프리팹
+        public RawImage lineImage;
+
         #endregion
 
 
@@ -31,6 +31,9 @@ namespace keastmin
         // 위치 정보를 담고 있는 그리드
         Vector2[,] positionGrid;
         StageNode[,] stageNodeGrid;
+
+        // 시작 층들을 모두 이어주는 내부적인 -1 층
+        StageNode startNodesPrev;
 
         #endregion
 
@@ -45,8 +48,11 @@ namespace keastmin
                 Debug.LogError("맵 생성에 필요한 오브젝트가 없습니다. " + this.name, this);
             }
 
+            startNodesPrev = new StageNode();
+            startNodesPrev.InitNode(-1, -1, false);
             CreatePathNode();
             StartNodeActivation();
+            CreatePathLine();
         }
 
         #endregion
@@ -89,6 +95,10 @@ namespace keastmin
                 {
                     float posX = startX + x * spacingX;
                     float posY = startY + y * spacingY;
+
+                    // 랜덤하게 위치 조정
+                    posX += Random.Range(-10.0f, 10.1f);
+                    posY += Random.Range(-10.0f, 10.1f);
                     positionGrid[x, y] = new Vector2(posX, posY);
                 }
             }
@@ -359,8 +369,9 @@ namespace keastmin
             return false;
         }
 
-        void Rule_3(StageNode node, HashSet<int> changeHash)
+        bool Rule_3(StageNode node, HashSet<int> changeHash)
         {
+            bool check = false;
             foreach(StageNode prev in node.prevNode)
             {
                 if (prev.nextNode.Count > 1)
@@ -370,15 +381,21 @@ namespace keastmin
 
                     foreach (StageNode next in prev.nextNode)
                     {
-                        typeHash.Add((int)next.nodeType);
+                        if (next != node)
+                        {
+                            typeHash.Add((int)next.nodeType);
+                        }
                     }
 
                     if(typeHash.Count < 2)
                     {
-                        changeHash.Add((int)node.nodeType);
+                        foreach (int type in typeHash) { changeHash.Add(type); };
+                        check = true;
                     }
                 }
             }
+
+            return check;
         }
 
         #endregion
@@ -393,7 +410,62 @@ namespace keastmin
                 if (stageNodeGrid[x, 0] != null)
                 {
                     stageNodeGrid[x, 0].selectEnable = true;
+                    stageNodeGrid[x, 0].prevNode.Add(startNodesPrev);
+                    startNodesPrev.nextNode.Add(stageNodeGrid[x, 0]);
                 }
+            }
+        }
+
+        void CreatePathLine()
+        {
+            Queue<StageNode> queueNodes = new Queue<StageNode>();
+            bool[,] visited = new bool[col, row];
+            foreach(StageNode start in startNodesPrev.nextNode)
+            {
+                queueNodes.Enqueue(start);
+                visited[start.x, start.floor] = true;
+            }
+
+            while(queueNodes.Count > 0)
+            {
+                StageNode currNode = queueNodes.Dequeue();
+                Vector2 currPos = positionGrid[currNode.x, currNode.floor];
+
+                foreach(StageNode next in currNode.nextNode)
+                {
+                    Vector2 targetPos = positionGrid[next.x, next.floor];
+                    DrawLine(currPos, targetPos);
+
+                    if (!visited[next.x, next.floor])
+                    {
+                        queueNodes.Enqueue(next);
+                        visited[next.x, next.floor] = true;
+                    }
+                }
+            }
+        }
+
+        void DrawLine(Vector2 currV, Vector2 targV)
+        {
+            float lineSpacing = 12.0f;
+
+            Vector2 direction = (targV - currV).normalized;
+            currV += direction * 17;
+            targV -= direction * 13;
+
+            float distance = Vector2.Distance(currV, targV);
+            float angle = Mathf.Atan2(direction.x, -direction.y) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+
+            int lineCount = Mathf.FloorToInt(distance / lineSpacing);
+            for(int k = 0; k <= lineCount; k++)
+            {
+                Vector2 pos = currV + direction * (lineSpacing * k);
+                RawImage rawImage = Instantiate(lineImage, stagePanel);
+                RectTransform rectTransform = rawImage.GetComponent<RectTransform>();
+                rectTransform.localPosition = pos;
+                rectTransform.localRotation = rotation;
+                rectTransform.localScale = Vector2.one;
             }
         }
 

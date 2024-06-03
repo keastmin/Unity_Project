@@ -2496,6 +2496,7 @@ MonoBehaviour:
   col: 7
   stagePanel: {fileID: 1743735632}
   stageButton: {fileID: 6946676424311015490, guid: 47002db0087163645838f56c1306acb3, type: 3}
+  lineImage: {fileID: 493496559461446441, guid: bf526024bd313044885f05b6f84fed2b, type: 3}
 --- !u!4 &1206423115
 Transform:
   m_ObjectHideFlags: 0
