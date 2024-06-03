@@ -95,6 +95,10 @@ namespace keastmin
                 {
                     float posX = startX + x * spacingX;
                     float posY = startY + y * spacingY;
+
+                    // 랜덤하게 위치 조정
+                    posX += Random.Range(-10.0f, 10.1f);
+                    posY += Random.Range(-10.0f, 10.1f);
                     positionGrid[x, y] = new Vector2(posX, posY);
                 }
             }
@@ -365,8 +369,9 @@ namespace keastmin
             return false;
         }
 
-        void Rule_3(StageNode node, HashSet<int> changeHash)
+        bool Rule_3(StageNode node, HashSet<int> changeHash)
         {
+            bool check = false;
             foreach(StageNode prev in node.prevNode)
             {
                 if (prev.nextNode.Count > 1)
@@ -376,15 +381,21 @@ namespace keastmin
 
                     foreach (StageNode next in prev.nextNode)
                     {
-                        typeHash.Add((int)next.nodeType);
+                        if (next != node)
+                        {
+                            typeHash.Add((int)next.nodeType);
+                        }
                     }
 
                     if(typeHash.Count < 2)
                     {
-                        changeHash.Add((int)node.nodeType);
+                        foreach (int type in typeHash) { changeHash.Add(type); };
+                        check = true;
                     }
                 }
             }
+
+            return check;
         }
 
         #endregion
@@ -438,8 +449,11 @@ namespace keastmin
         {
             float lineSpacing = 12.0f;
 
-            float distance = Vector2.Distance(currV, targV);
             Vector2 direction = (targV - currV).normalized;
+            currV += direction * 17;
+            targV -= direction * 13;
+
+            float distance = Vector2.Distance(currV, targV);
             float angle = Mathf.Atan2(direction.x, -direction.y) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 

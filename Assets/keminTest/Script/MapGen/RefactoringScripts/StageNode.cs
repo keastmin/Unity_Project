@@ -77,13 +77,16 @@ namespace keastmin
 
         void UpdateNodeActivation()
         {
+            Button _button = gameObject.GetComponent<Button>();
             if (_selectEnable)
             {
                 animator.SetBool("IsActive", true);
+                _button.interactable = true;
             }
             else
             {
                 animator.SetBool("IsActive", false);
+                _button.interactable = false;
             }
         }
 
