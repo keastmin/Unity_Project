@@ -137,7 +137,28 @@ public class MainMenu : MonoBehaviour
         if(selectCharacter == 0)
         {
             Debug.Log("아이언클래드로 출정");
-            SceneManager.LoadScene("KeminTestScene");
+            //SceneManager.LoadScene("keminBattleUIScene");
+            LoadScene();
         }
+    }
+
+    public void LoadScene()
+    {
+        StartCoroutine(LoadSceneAsync());
+    }
+
+    IEnumerator LoadSceneAsync()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("keminBattleUIScene");
+
+        while (!asyncLoad.isDone)
+        {
+            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            Debug.Log("로딩 진행도: " + (progress * 100f) + "%");
+
+            yield return null;
+        }
+
+        Debug.Log("씬 로드가 완료되었습니다.");
     }
 }

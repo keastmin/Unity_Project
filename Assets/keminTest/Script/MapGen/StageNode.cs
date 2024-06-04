@@ -77,16 +77,19 @@ namespace keastmin
 
         void UpdateNodeActivation()
         {
-            Button _button = gameObject.GetComponent<Button>();
-            if (_selectEnable)
+            if (this.floor >= 0)
             {
-                animator.SetBool("IsActive", true);
-                _button.interactable = true;
-            }
-            else
-            {
-                animator.SetBool("IsActive", false);
-                _button.interactable = false;
+                Button _button = gameObject.GetComponent<Button>();
+                if (_selectEnable)
+                {
+                    animator.SetBool("IsActive", true);
+                    _button.interactable = true;
+                }
+                else
+                {
+                    animator.SetBool("IsActive", false);
+                    _button.interactable = false;
+                }
             }
         }
 
@@ -103,7 +106,7 @@ namespace keastmin
         {
             this.x = x;
             this.floor = floor;
-            this._selectEnable = select;
+            this.selectEnable = false;
             this.nextNode = new List<StageNode>();
             this.prevNode = new List<StageNode>();
         }
