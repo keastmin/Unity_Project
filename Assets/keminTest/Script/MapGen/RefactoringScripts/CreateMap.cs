@@ -278,20 +278,18 @@ namespace keastmin
                     if (currFloor != 0 && currFloor != 8 && currFloor != 14)
                     {
                         int type = (int)currNode.nodeType;
+                        bool check = false;
+                      
+                        check = Rule_1_Check(eliteNode, restNode, type, currFloor);                         // 규칙 1
+                        if(!check) check = Rule_2_Check(currNode, eliteNode, restNode, shopNode, type);     // 규칙 2                       
+                        if(!check) check = Rule_3_Check(currNode);                                          // 규칙 3
 
-                        // 규칙 3
-                        Rule_3(currNode, changeNodeHash);
-
-                        // 규칙 1
-                        if (currFloor < 5)
+                        // 노드를 변환해야 한다면 변환 후 규칙이 모두 준수될 수 있도록 불가능한 변환 노드 검사
+                        if (check)
                         {
-                            Rule_1(eliteNode, restNode, type, changeNodeHash);
-                        }
-
-                        // 규칙 2
-                        if (type == eliteNode || type == restNode || type == shopNode)
-                        {
-                            Rule_2(eliteNode, restNode, shopNode, currNode, changeNodeHash);
+                            Rule_1_Compliance(eliteNode, restNode, currFloor, changeNodeHash);
+                            Rule_2_Compliance(currNode, eliteNode, restNode, shopNode, changeNodeHash);
+                            Rule_3_Compliance(currNode, changeNodeHash);
                         }
                     }
 
@@ -321,81 +319,104 @@ namespace keastmin
             }
         }
 
-        void Rule_1(int eliteNode, int restNode, int currNodeType, HashSet<int> changeHash)
+        bool Rule_1_Check(int eliteNode, int restNode, int currNodeType, int floor)
         {
-            if (currNodeType == eliteNode || currNodeType == restNode)
-            {
-                changeHash.Add(eliteNode);
-                changeHash.Add(restNode);
-            }
+            if ((currNodeType == eliteNode || currNodeType == restNode) && floor < 5) return true;
+            return false;
         }
 
-        void Rule_2(int eliteNode, int restNode, int shopNode, StageNode node, HashSet<int> changeHash)
+        bool Rule_2_Check(StageNode node, int eliteNode, int restNode, int shopNode, int currNodeType)
         {
-            bool check;
-            check = Rule_2_Check(node, node.nextNode);
-            if (!check) check = Rule_2_Check(node, node.prevNode);
-
-            if (check)
+            if (currNodeType == eliteNode || currNodeType == restNode || currNodeType == shopNode)
             {
+                foreach (StageNode prev in node.prevNode)
+                {
+                    if (node.nodeType == prev.nodeType)
+                    {
+                        return true;
+                    }
+                }
                 foreach (StageNode next in node.nextNode)
                 {
-                    int type = (int)next.nodeType;
-                    if (type == eliteNode || type == restNode || type == shopNode)
+                    if (node.nodeType == next.nodeType)
                     {
-                        changeHash.Add(type);
+                        return true;
                     }
-                }
-                foreach(StageNode prev in node.prevNode)
-                {
-                    int type = (int)prev.nodeType;
-                    if (type == eliteNode || type == restNode || type == shopNode)
-                    {
-                        changeHash.Add(type);
-                    }
-                }
-            }
-        }
-
-        bool Rule_2_Check(StageNode node, List<StageNode> targetList)
-        {
-            foreach(StageNode target in targetList)
-            {
-                if(node.nodeType == target.nodeType)
-                {
-                    return true;
                 }
             }
             return false;
         }
 
-        bool Rule_3(StageNode node, HashSet<int> changeHash)
+        bool Rule_3_Check(StageNode node)
         {
-            bool check = false;
             foreach(StageNode prev in node.prevNode)
             {
-                if (prev.nextNode.Count > 1)
+                if(prev.nextNode.Count > 1)
                 {
-                    // 중복되는 경로의 수가 몇 개인지 확인하기 위한 해쉬셋
-                    HashSet<int> typeHash = new HashSet<int>();
-
-                    foreach (StageNode next in prev.nextNode)
+                    HashSet<int> checkTypes = new HashSet<int>();
+                    foreach(StageNode next in prev.nextNode)
                     {
-                        if (next != node)
-                        {
-                            typeHash.Add((int)next.nodeType);
-                        }
+                        checkTypes.Add((int)next.nodeType);
                     }
 
-                    if(typeHash.Count < 2)
-                    {
-                        foreach (int type in typeHash) { changeHash.Add(type); };
-                        check = true;
-                    }
+                    if (checkTypes.Count < 2) return true;
                 }
             }
 
-            return check;
+            return false;
+        }
+
+        void Rule_1_Compliance(int eliteNode, int restNode, int floor, HashSet<int> hash)
+        {
+            if(floor < 5)
+            {
+                hash.Add(eliteNode);
+                hash.Add(restNode);
+            }
+        }
+
+        void Rule_2_Compliance(StageNode node, int eliteNode, int restNode, int shopNode, HashSet<int> hash)
+        {
+            foreach(StageNode prev in node.prevNode)
+            {
+                if((int)prev.nodeType == eliteNode || (int)prev.nodeType == restNode || (int)prev.nodeType == shopNode)
+                {
+                    hash.Add((int)prev.nodeType);
+                }
+            }
+            foreach (StageNode next in node.nextNode)
+            {
+                if ((int)next.nodeType == eliteNode || (int)next.nodeType == restNode || (int)next.nodeType == shopNode)
+                {
+                    hash.Add((int)next.nodeType);
+                }
+            }
+        }
+
+        void Rule_3_Compliance(StageNode node, HashSet<int> hash)
+        {
+            foreach(StageNode prev in node.prevNode)
+            {
+                if(prev.nextNode.Count > 1)
+                {
+                    HashSet<int> types = new HashSet<int>();
+                    foreach(StageNode next in prev.nextNode)
+                    {
+                        if(node != next)
+                        {
+                            types.Add((int)next.nodeType);
+                        }
+                    }
+
+                    if(types.Count < 2)
+                    {
+                        foreach(int type in types)
+                        {
+                            hash.Add(type);
+                        }
+                    }
+                }
+            }
         }
 
         #endregion
