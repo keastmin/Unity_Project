@@ -5,27 +5,27 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    //public RectTransform uiRoot1;
-    public RectTransform uiRoot2;
-    public RectTransform uiRoot3;
-    public RectTransform uiRoot4;
-    public RectTransform uiRoot5;
-    public RectTransform uiRoot6;
-    public RectTransform uiRoot7;
+    #region public 변수
 
+    public List<RectTransform> uiRoot; // 상단 UI 리스트
 
+    // 버튼을 누르면 활성화 여부를 결정할 패널들
+    public GameObject mapPanel;
+    public GameObject buttonPanel;
+    public GameObject cardsPanel;
+    public GameObject settingPanel;
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         Canvas.ForceUpdateCanvases();
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot1);
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot2);
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot3);
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot4);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot5);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot6);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(uiRoot7);
+
+        foreach(RectTransform root in uiRoot)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(root);
+        }
     }
 
     // Update is called once per frame
