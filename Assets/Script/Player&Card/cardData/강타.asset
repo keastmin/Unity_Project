@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0fc99719e619604d9907008cf8a78bd, type: 3}
+  m_Name: "\uAC15\uD0C0"
+  m_EditorClassIdentifier: 
+  Type: 0
+  color: 0
+  targetType: 0
+  isUpgraded: 0
+  cost: 2
+  upgradeCost: 2
+  cardName: "\uAC15\uD0C0"
+  baseDesc: "\uD53C\uD574\uB97C 8 \uC90D\uB2C8\uB2E4.\r\n\uCDE8\uC57D\uC744 2 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  upgradeDesc: "\uD53C\uD574\uB97C 10 \uC90D\uB2C8\uB2E4.\r\n\uCDE8\uC57D\uC744 3
+    \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  Icon: {fileID: -102593398, guid: 60cb9d8db254f1b4991b8fa301f90be7, type: 3}
+  baseEffects:
+  - effectType: 1
+    amount: 5
+  upgradeEffects:
+  - effectType: 1
+    amount: 8

@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class Order : MonoBehaviour
 {
-    [SerializeField] Renderer[] backRenderers;
+    [SerializeField] SpriteRenderer[] backRenderers;
     [SerializeField] Renderer[] middleRenderers;
     [SerializeField] string sortingLayerName;
     int originOrder;
-
-    private void Start()
-    {
-        SetOrder(0);
-    }
 
     public void SetOriginOrder(int originOrder)
     {
@@ -25,22 +20,20 @@ public class Order : MonoBehaviour
         SetOrder(isMostFront ? 100 : originOrder);
     }
 
-
     public void SetOrder(int order)
     {
-        int mulOrder = order * 10 + 4;
-        int backOreder = order * 10;
+        int mulOrder = order * 10;
 
         foreach(var renderer in backRenderers)
         {
             renderer.sortingLayerName = sortingLayerName;
-            renderer.sortingOrder = backOreder++;
+            renderer.sortingOrder = mulOrder++;
         }
 
         foreach (var renderer in middleRenderers)
         {
             renderer.sortingLayerName = sortingLayerName;
-            renderer.sortingOrder = mulOrder++;
+            renderer.sortingOrder = mulOrder++ + 1;
         }
     }
 }

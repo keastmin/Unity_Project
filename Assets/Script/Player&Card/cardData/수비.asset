@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0fc99719e619604d9907008cf8a78bd, type: 3}
-  m_Name: "\uD0C0\uACA9"
+  m_Name: "\uC218\uBE44"
   m_EditorClassIdentifier: 
-  Type: 0
+  Type: 1
   color: 0
-  targetType: 1
+  targetType: 0
   isUpgraded: 0
   cost: 1
   upgradeCost: 1
-  cardName: "\uD0C0\uACA9"
-  baseDesc: "\uD53C\uD574\uB97C 6 \uC90D\uB2C8\uB2E4.\t"
-  upgradeDesc: "\uD53C\uD574\uB97C 9 \uC90D\uB2C8\uB2E4.\t"
-  Icon: {fileID: 169172476, guid: 4732ce132d9f08b42a7756e4d9ae888e, type: 3}
+  cardName: "\uC218\uBE44"
+  baseDesc: "\uBC29\uC5B4\uB3C4\uB97C 5 \uC5BB\uC2B5\uB2C8\uB2E4."
+  upgradeDesc: "\uBC29\uC5B4\uB3C4\uB97C 8 \uC5BB\uC2B5\uB2C8\uB2E4."
+  Icon: {fileID: -850005313, guid: dfd5705a7cfc9a445b6bfced499e950c, type: 3}
   baseEffects:
-  - effectType: 0
-    amount: 6
+  - effectType: 1
+    amount: 5
   upgradeEffects:
-  - effectType: 0
-    amount: 9
+  - effectType: 1
+    amount: 8
