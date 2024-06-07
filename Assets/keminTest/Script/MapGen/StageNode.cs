@@ -113,23 +113,8 @@ namespace keastmin
 
         public void OnClickNextStageInfo()
         {
-            //Debug.Log("현재 층과 위치: " + this.floor + " " + this.x);
-            //Debug.Log("다음 경로의 수 = " + this.nextNode.Count);
-            //foreach (StageNode next in this.nextNode)
-            //{
-            //    Debug.Log(next.floor + " " + next.x);
-            //}
-            //Debug.Log("이전 경로의 수 = " + this.prevNode.Count);
-            //foreach(StageNode prev in this.prevNode)
-            //{
-            //    Debug.Log(prev.floor + " " + prev.x);
-            //}
-            //Debug.Log(_selectEnable);
-
             if (_selectEnable)
             {
-                //_selectEnable = false;
-                //UpdateNodeActivation();
                 foreach(StageNode next in this.nextNode)
                 {
                     next.selectEnable = true;
@@ -142,8 +127,6 @@ namespace keastmin
                     }
                 }
             }
-
-            //Debug.Log(this.selectEnable);
         }
     }
 }
