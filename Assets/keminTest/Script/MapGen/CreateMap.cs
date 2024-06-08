@@ -10,6 +10,9 @@ namespace keastmin
     {
         #region public 변수
 
+        // UIManager를 위한 인스턴스
+        public static CreateMap createMapInstance;
+
         // 그리드 사이즈
         public int row = 15; // 행의 수
         public int col = 7;  // 열의 수
@@ -33,6 +36,7 @@ namespace keastmin
         StageNode[,] stageNodeGrid;
 
         // 시작 층들을 모두 이어주는 내부적인 -1 층
+        [SerializeField] GameObject startNodesObject;
         StageNode startNodesPrev;
 
         #endregion
@@ -42,17 +46,20 @@ namespace keastmin
 
         void Start()
         {
+            createMapInstance = this;
+
             // public 변수 할당 검사
             if (stagePanel == null || stageButton == null)
             {
                 Debug.LogError("맵 생성에 필요한 오브젝트가 없습니다. " + this.name, this);
             }
 
-            startNodesPrev = new StageNode();
+            startNodesPrev = startNodesObject.GetComponent<StageNode>();
             startNodesPrev.InitNode(-1, -1, false);
             CreatePathNode();
             StartNodeActivation();
             CreatePathLine();
+            UIManager.uiManagerInstance.AllPanelActiveFalse();
         }
 
         #endregion
@@ -518,6 +525,28 @@ namespace keastmin
                 rectTransform.localRotation = rotation;
                 rectTransform.localScale = Vector2.one;
             }
+        }
+
+        #endregion
+
+
+        #region public 매서드
+
+        // StageNodeGrid 선택 가능한 노드 반환 매서드
+        public List<StageNode> GetStageNodeList()
+        {
+            List<StageNode> nodes = new List<StageNode>();
+            for(int x = 0; x < col; x++)
+            {
+                for(int y = 0; y < row; y++)
+                {
+                    if (stageNodeGrid[x, y] != null && stageNodeGrid[x, y].selectEnable)
+                    {
+                        nodes.Add(stageNodeGrid[x, y]);
+                    }
+                }
+            }
+            return nodes;
         }
 
         #endregion
