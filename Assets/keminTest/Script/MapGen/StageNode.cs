@@ -26,8 +26,7 @@ namespace keastmin
 
         #region public º¯¼ö
 
-        [SerializeField]
-        Animator animator;
+        public Animator animator;
         public Sprite nodeSprite;
         public List<StageNode> nextNode;
         public List<StageNode> prevNode;

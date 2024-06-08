@@ -162,6 +162,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2c6ea81ca8ed4e841a668c3881354462, type: 3}
   _selectEnable: 0
   _nodeType: 0
+  _image: {fileID: 8135206570867444150}
 --- !u!95 &5035656705355677436
 Animator:
   serializedVersion: 5
