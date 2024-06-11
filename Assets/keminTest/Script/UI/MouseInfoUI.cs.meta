@@ -3,7 +3,10 @@ guid: baa73ffe06b4d0845919b483a4155f0c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - canvasRectTransform: {instanceID: 0}
+  - topPanelRectTransform: {instanceID: 0}
+  - infoPanel: {fileID: 9129203533180285407, guid: 6e444f45f97a0804fabbd2eb6bfa5085, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
