@@ -553,7 +553,7 @@ namespace keastmin
         // 현재 층 수를 반환하는 매서드
         public int GetStageNodeFloor()
         {
-            int floor = -1;
+            int floor = 0;
             for(int y = 0; y < row; y++)
             {
                 for(int x = 0; x<col; x++)
