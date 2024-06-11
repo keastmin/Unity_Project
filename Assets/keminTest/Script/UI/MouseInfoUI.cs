@@ -4,61 +4,55 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MouseInfoUI : MonoBehaviour
+namespace keastmin
 {
-    public GameObject targetGameObject;
-
-    [SerializeField]
-    private string uiText;
-    private TextMeshProUGUI panalText;
-    //private Image panalImage;
-    bool bCheck;
-
-    private void Awake()
+    public class MouseInfoUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        //panalImage = targetGameObject.GetComponentInChildren<Image>();
-        panalText = targetGameObject.GetComponentInChildren<TextMeshProUGUI>();
-    }
+        private bool isMouseOver = false;
 
-    void Start()
-    {
+        [SerializeField] private RectTransform canvasRectTransform;
+        [SerializeField] private RectTransform topPanelRectTransform;
+        [SerializeField] private GameObject infoPanel;
 
-    }
+        [SerializeField] private TextMeshPro title;
+        [SerializeField] private TextMeshPro text;
 
-    void Update()
-    {
-        // 마우스 위치에 따라 게임 오브젝트 위치 업데이트
-        Vector3 mousePosition = Input.mousePosition;
-        Vector3 plusPosition = new Vector3(0, -50, 0);
-        //panalImage.transform.position = mousePosition + plusPosition;
+        #region MonoBehaviour 매서드
 
-    }
+        private void Start()
+        {
+            canvasRectTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
+            topPanelRectTransform = GameObject.Find("Top UI Panel").GetComponent<RectTransform>();
+            if (canvasRectTransform == null || topPanelRectTransform == null)
+            {
+                Debug.LogError("캔버스 찾을 수 없음");
+            }
+            
+            
+        }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        bCheck = true;
-        Debug.Log("들어옴");
+        private void Update()
+        {
+            if (isMouseOver)
+            {
+                Debug.Log("True");
+            }
+            else
+            {
+                Debug.Log("False");
+            }
+        }
 
-        panalText.text = uiText;
-        targetGameObject.SetActive(true);
+        #endregion
 
+        public void OnPointerEnter(PointerEventData evnetData)
+        {
+            isMouseOver = true;
+        }
 
-
-    }
-
-    //public void OnPointerMove(PointerEventData eventData)
-    //{
-    //    panalText.text = uiText;
-    //    panalImage.gameObject.SetActive(true);
-    //    //Vector3 mousePosition = Input.mousePosition;
-    //    //panalImage.transform.position = mousePosition;
-    //}
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        bCheck = false;
-        Debug.Log("나감");
-
-        targetGameObject.SetActive(false);
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            isMouseOver = false;
+        }
     }
 }
