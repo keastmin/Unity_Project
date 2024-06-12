@@ -1,6 +1,7 @@
 using keastmin;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +40,13 @@ namespace keastmin
         private int _startHeight = 450;
         private int _floorHeight = 80;
 
+        // Hour, Minute, Second
+        private int[] _time = new int[3];
+
+        private float miliSecond = 0f;
+
+        [SerializeField] private TextMeshProUGUI timerText;
+
         #endregion
 
 
@@ -58,7 +66,25 @@ namespace keastmin
         // Update is called once per frame
         void Update()
         {
+            miliSecond += Time.deltaTime;
+            if (miliSecond >= 1)
+            {
+                miliSecond = 0f;
+                _time[2] += 1;
+            }
+            if (_time[2] >= 60)
+            {
+                _time[2] = 0;
+                _time[1] += 1;
+            }
+            if (_time[1] >= 60)
+            {
+                _time[1] = 0;
+                _time[0] += 1;
+            }
 
+            timerText.text = _time[0].ToString() + ":" + _time[1].ToString() + ":" + _time[2].ToString();
+            //Debug.Log(_time[0] + ":" + _time[1] + ":" + _time[2]);
         }
 
         #region 버튼 제어 함수
