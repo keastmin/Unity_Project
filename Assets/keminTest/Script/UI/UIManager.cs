@@ -66,25 +66,20 @@ namespace keastmin
         // Update is called once per frame
         void Update()
         {
-            miliSecond += Time.deltaTime;
-            if (miliSecond >= 1)
-            {
-                miliSecond = 0f;
-                _time[2] += 1;
-            }
-            if (_time[2] >= 60)
-            {
-                _time[2] = 0;
-                _time[1] += 1;
-            }
-            if (_time[1] >= 60)
-            {
-                _time[1] = 0;
-                _time[0] += 1;
-            }
+            SetTimer();
 
-            timerText.text = _time[0].ToString() + ":" + _time[1].ToString() + ":" + _time[2].ToString();
-            //Debug.Log(_time[0] + ":" + _time[1] + ":" + _time[2]);
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                OnClickMapButton();
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                OnClickCardListPanel();
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                OnClickSettingPanel();
+            }
         }
 
         #region 버튼 제어 함수
@@ -126,6 +121,46 @@ namespace keastmin
             }
         }
 
+        public void OnClickCardListPanel()
+        {
+            if (cardsPanel.activeSelf)
+            {
+                AllPanelActiveFalse();
+            }
+            else
+            {
+                if (mapPanel.activeSelf)
+                {
+                    mapPanel.SetActive(false);
+                }
+                if (settingPanel.activeSelf)
+                {
+                    settingPanel.SetActive(false);
+                }
+                cardsPanel.SetActive(true);
+            }
+        }
+
+        public void OnClickSettingPanel()
+        {
+            if (settingPanel.activeSelf)
+            {
+                AllPanelActiveFalse();
+            }
+            else
+            {
+                if (mapPanel.activeSelf)
+                {
+                    mapPanel.SetActive(false);
+                }
+                if (cardsPanel.activeSelf)
+                {
+                    cardsPanel.SetActive(false);
+                }
+                settingPanel.SetActive(true);
+            }
+        }
+
         #endregion
 
 
@@ -163,6 +198,28 @@ namespace keastmin
             {
                 settingPanel.SetActive(false);
             }
+        }
+
+        // 타이머 함수
+        void SetTimer()
+        {
+            miliSecond += Time.deltaTime;
+            if (miliSecond >= 1)
+            {
+                miliSecond = 0f;
+                _time[2] += 1;
+            }
+            if (_time[2] >= 60)
+            {
+                _time[2] = 0;
+                _time[1] += 1;
+            }
+            if (_time[1] >= 60)
+            {
+                _time[1] = 0;
+                _time[0] += 1;
+            }
+            timerText.text = _time[0].ToString() + ":" + _time[1].ToString() + ":" + _time[2].ToString();
         }
 
         #endregion
