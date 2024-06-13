@@ -8,8 +8,6 @@ namespace keastmin
 {
     public class MouseInfoUI : MonoBehaviour
     {
-        private bool isMouseOver = false;
-
         [SerializeField] private RectTransform canvasRectTransform;
         [SerializeField] private RectTransform topPanelRectTransform;
         [SerializeField] private GameObject infoPanel;
@@ -69,13 +67,23 @@ namespace keastmin
 
         #endregion
 
+        private void SetCanvasSize()
+        {
+
+        }
+
         private void MouseHover()
         {
             Vector2 mousePosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, Input.mousePosition, null,out mousePosition);
             Vector2 plusPosition = new Vector2(0f, -50f);
             RectTransform infoRectTransform = infoObject.GetComponent<RectTransform>();
-            infoRectTransform.localPosition = mousePosition + plusPosition;
+            Vector2 proposedPosition = mousePosition + plusPosition;
+
+            // 최종 위치 설정
+            infoRectTransform.localPosition = proposedPosition;
+
+
         }
     }
 }
