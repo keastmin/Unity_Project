@@ -86,8 +86,6 @@ namespace keastmin
             float panelWidth = rectTransform.rect.width;
             float panelHeight = rectTransform.rect.height;
 
-            Debug.Log(panelWidth + " " + panelHeight);
-
             float spacingX = panelWidth / (col + 1);
             float spacingY = panelHeight / (row + 1);
 
