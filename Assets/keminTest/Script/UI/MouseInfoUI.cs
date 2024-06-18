@@ -19,6 +19,14 @@ namespace keastmin
         private GameObject infoObject;
         private RectTransform panelRectTransform;
 
+        [Header("Info Position")]
+        [SerializeField] private float plusX = 0f;
+        [SerializeField] private float plusY = -50f;
+        [SerializeField] private bool anchorX = false;
+        [SerializeField] private float positionX = 0f;
+        [SerializeField] private bool anchorY = false;
+        [SerializeField] private float positionY = 0f;
+
         #region MonoBehaviour 매서드
 
         private void Start()
@@ -76,9 +84,12 @@ namespace keastmin
         {
             Vector2 mousePosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, Input.mousePosition, null,out mousePosition);
-            Vector2 plusPosition = new Vector2(0f, -50f);
+            Vector2 plusPosition = new Vector2(plusX, plusY);
             RectTransform infoRectTransform = infoObject.GetComponent<RectTransform>();
             Vector2 proposedPosition = mousePosition + plusPosition;
+
+            if (anchorX) proposedPosition.x = positionX;
+            if (anchorY) proposedPosition.y = positionY;
 
             // 최종 위치 설정
             infoRectTransform.localPosition = proposedPosition;
