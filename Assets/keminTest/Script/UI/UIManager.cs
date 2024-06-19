@@ -28,6 +28,10 @@ namespace keastmin
         public GameObject cardsPanel;
         public GameObject settingPanel;
 
+        // 가장 베이스가 되는 UI 패널과 그 애니메이터
+        public GameObject uiPanel;
+        public Animator uiPanelAnimator;
+
         #endregion
 
 
@@ -86,6 +90,7 @@ namespace keastmin
 
         public void OnClickMapButton()
         {
+            UIPanelActiveTrue();
             if (mapPanel.activeSelf)
             {
                 AllPanelActiveFalse();
@@ -123,6 +128,7 @@ namespace keastmin
 
         public void OnClickCardListPanel()
         {
+            UIPanelActiveTrue();
             if (cardsPanel.activeSelf)
             {
                 AllPanelActiveFalse();
@@ -143,6 +149,7 @@ namespace keastmin
 
         public void OnClickSettingPanel()
         {
+            UIPanelActiveTrue();
             if (settingPanel.activeSelf)
             {
                 AllPanelActiveFalse();
@@ -165,6 +172,24 @@ namespace keastmin
 
 
         #region private 매서드
+
+        private void UIPanelActiveTrue()
+        {
+            if (!uiPanel.activeSelf)
+            {
+                uiPanel.SetActive(true);
+                uiPanelAnimator.SetBool("IsActive", true);
+            }
+        }
+
+        private void UIPanelActiveFalse()
+        {
+            if (uiPanel.activeSelf)
+            {
+                uiPanelAnimator.SetBool("IsActive", false);
+                uiPanel.SetActive(false);
+            }
+        }
 
         public void AllPanelActiveFalse()
         {
@@ -198,6 +223,7 @@ namespace keastmin
             {
                 settingPanel.SetActive(false);
             }
+            UIPanelActiveFalse();
         }
 
         // 타이머 함수

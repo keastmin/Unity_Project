@@ -427,12 +427,15 @@ namespace keastmin
 
         void ResetButton()
         {
+            Debug.LogError("버튼 리셋");
             for(int i = 0; i < col; i++)
             {
                 for(int j = 0; j < row; j++)
                 {
-                    Debug.LogError("버튼 리셋");
-                    Destroy(stageNodeGrid[i, j].gameObject);
+                    if (stageNodeGrid[i, j] != null)
+                    {
+                        Destroy(stageNodeGrid[i, j].gameObject);
+                    }
                 }
             }
         }
