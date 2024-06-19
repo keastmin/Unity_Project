@@ -1752,6 +1752,7 @@ GameObject:
   - component: {fileID: 788242739}
   - component: {fileID: 788242741}
   - component: {fileID: 788242742}
+  - component: {fileID: 788242743}
   m_Layer: 5
   m_Name: UI Panel
   m_TagString: Untagged
@@ -1819,6 +1820,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &788242743
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788242738}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2aaa06153a995174b94920d0fa9c79a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &842781505
 GameObject:
   m_ObjectHideFlags: 0
@@ -2417,6 +2439,8 @@ MonoBehaviour:
   buttonPanel: {fileID: 1743735631}
   cardsPanel: {fileID: 371942395}
   settingPanel: {fileID: 1306047965}
+  uiPanel: {fileID: 788242738}
+  uiPanelAnimator: {fileID: 788242743}
   timerText: {fileID: 1516124045}
 --- !u!4 &1005346325
 Transform:
@@ -4534,7 +4558,6 @@ GameObject:
   - component: {fileID: 2036251799}
   - component: {fileID: 2036251802}
   - component: {fileID: 2036251800}
-  - component: {fileID: 2036251803}
   m_Layer: 5
   m_Name: Map Scroll View
   m_TagString: Untagged
@@ -4600,36 +4623,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036251798}
   m_CullTransparentMesh: 1
---- !u!114 &2036251803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2036251798}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.30980393}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2036503112
 GameObject:
   m_ObjectHideFlags: 0
