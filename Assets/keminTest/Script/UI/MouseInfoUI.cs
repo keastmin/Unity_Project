@@ -27,6 +27,10 @@ namespace keastmin
         [SerializeField] private bool anchorY = false;
         [SerializeField] private float positionY = 0f;
 
+        private float canvasWidth;
+        private float canvasHeight;
+        private float topPanelHeight;
+
         #region MonoBehaviour 매서드
 
         private void Start()
@@ -53,6 +57,13 @@ namespace keastmin
                 currTitle.text = infoTitle;
                 currText.text = infoText;
                 infoObject.SetActive(false);
+
+                canvasWidth = canvasRectTransform.rect.width / 2;
+                canvasHeight = canvasRectTransform.rect.height / 2;
+                topPanelHeight = topPanelRectTransform.rect.height;
+
+                RectTransform rectTransform = infoObject.GetComponent<RectTransform>();
+                Debug.Log(name + " " + rectTransform.rect.width + " " + rectTransform.rect.height);
             } 
         }
 
@@ -86,15 +97,18 @@ namespace keastmin
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, Input.mousePosition, null,out mousePosition);
             Vector2 plusPosition = new Vector2(plusX, plusY);
             RectTransform infoRectTransform = infoObject.GetComponent<RectTransform>();
-            Vector2 proposedPosition = mousePosition + plusPosition;
+            Vector2 proposedPosition = mousePosition;// + plusPosition;
 
-            if (anchorX) proposedPosition.x = positionX;
-            if (anchorY) proposedPosition.y = positionY;
+            float infoWidth = infoRectTransform.rect.width / 2;
+            float infoHeight = infoRectTransform.rect.height / 2;
+
+            if (proposedPosition.y < -canvasHeight + 10 + infoHeight) proposedPosition.y = -canvasHeight + 10 + infoHeight;
+            if (proposedPosition.y > canvasHeight - topPanelHeight - 10 - infoHeight) proposedPosition.y = canvasHeight - topPanelHeight - 10 - infoHeight;
+            if (proposedPosition.x < -canvasWidth + 10 + infoWidth) proposedPosition.x = -canvasWidth + 10 + infoWidth;
+            if (proposedPosition.x > canvasWidth - 10 - infoWidth) proposedPosition.x = canvasWidth - 10 - infoWidth;
 
             // 최종 위치 설정
             infoRectTransform.localPosition = proposedPosition;
-
-
         }
     }
 }
