@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace keastmin
 {
@@ -56,14 +57,17 @@ namespace keastmin
                 TextMeshProUGUI currText = panelChilds[1].GetComponent<TextMeshProUGUI>();
                 currTitle.text = infoTitle;
                 currText.text = infoText;
+
+                RectTransform rectTransform = infoObject.GetComponent<RectTransform>();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+
                 infoObject.SetActive(false);
 
                 canvasWidth = canvasRectTransform.rect.width / 2;
                 canvasHeight = canvasRectTransform.rect.height / 2;
                 topPanelHeight = topPanelRectTransform.rect.height;
 
-                RectTransform rectTransform = infoObject.GetComponent<RectTransform>();
-                Debug.Log(name + " " + rectTransform.rect.width + " " + rectTransform.rect.height);
+                //Debug.Log(name + " " + rectTransform.rect.width + " " + rectTransform.rect.height);
             } 
         }
 
@@ -75,8 +79,8 @@ namespace keastmin
 
             if (isInPanel)
             {
-                if (!infoObject.activeSelf) infoObject.SetActive(true);
                 MouseHover();
+                if (!infoObject.activeSelf) infoObject.SetActive(true);
             }
             else
             {

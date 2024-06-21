@@ -187,16 +187,11 @@ namespace keastmin
             if (uiPanel.activeSelf)
             {
                 uiPanelAnimator.SetBool("IsActive", false);
-                uiPanel.SetActive(false);
             }
         }
 
         public void AllPanelActiveFalse()
         {
-            if (!mapPanel.activeSelf)
-            {
-                mapPanel.SetActive(true);
-            }
             if (mapPanel.activeSelf)
             {
                 buttonPanel.SetActive(false);
@@ -206,19 +201,11 @@ namespace keastmin
                 mapPanel.SetActive(false);
             }
 
-            if (!cardsPanel.activeSelf)
-            {
-                cardsPanel.SetActive(true);
-            }
             if (cardsPanel.activeSelf)
             {
                 cardsPanel.SetActive(false);
             }
 
-            if (!settingPanel.activeSelf)
-            {
-                settingPanel.SetActive(true);
-            }
             if (settingPanel.activeSelf)
             {
                 settingPanel.SetActive(false);
