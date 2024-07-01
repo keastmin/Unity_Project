@@ -1,6 +1,7 @@
 using keastmin;
 using System.Collections;
 using System.Collections.Generic;
+using System.Transactions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,20 +18,12 @@ namespace keastmin
         // 씬 이동 시 상단 패널을 초기화 할 변수 리스트
         public List<RectTransform> uiRoot; // 상단 UI 리스트
 
-        // 지도 이미지의 애니메이터
-        public Animator mapTopAnimator;
-        public Animator mapMidAnimator;
-        public Animator mapBotAnimator;
-
         // 버튼을 누르면 활성화 여부를 결정할 패널들
+        public GameObject basePanel;
         public GameObject mapPanel;
         public GameObject buttonPanel;
         public GameObject cardsPanel;
         public GameObject settingPanel;
-
-        // 가장 베이스가 되는 UI 패널과 그 애니메이터
-        public GameObject uiPanel;
-        public Animator uiPanelAnimator;
 
         #endregion
 
@@ -51,23 +44,34 @@ namespace keastmin
 
         [SerializeField] private TextMeshProUGUI timerText;
 
+        // UI의 FadeIn, FadeOut을 담당할 캔버스 그룹
+        private CanvasGroup _basePanelCanvasGroup;
+        private CanvasGroup _mapPanelCanvasGroup;
+
+        // 정보에 관한 패널의 활성화 여부
+        private bool _isBasePanelActive = false;
+        private bool _isMapPanelActive = false;
+        private bool _isCardsPanelActive = false;
+        private bool _isSettingPanelActive = false;
+
+        // 코루틴 변수
+        private Coroutine _basePanelCoroutine;
+        private Coroutine _mapPanelCoroutine;
+
         #endregion
 
 
-        // Start is called before the first frame update
+        #region MonoBehaviou 메서드
+
         void Start()
         {
             uiManagerInstance = this;
-            Canvas.ForceUpdateCanvases();
-
-            foreach (RectTransform root in uiRoot)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(root);
-            }
+            _basePanelCanvasGroup = basePanel.GetComponent<CanvasGroup>();
+            _mapPanelCanvasGroup = mapPanel.GetComponent<CanvasGroup>();
             _scrollViewContent = mapPanel.GetComponent<ScrollRect>().content;
+            UpdateCanvasRayout(); // 캔버스의 UI 요소 중 실행 시 정상적이지 않은 UI 강제 업데이트
         }
 
-        // Update is called once per frame
         void Update()
         {
             SetTimer();
@@ -86,30 +90,24 @@ namespace keastmin
             }
         }
 
+        #endregion
+
+
         #region 버튼 제어 함수
 
         public void OnClickMapButton()
         {
-            UIPanelActiveTrue();
-            if (mapPanel.activeSelf)
+            if (_isMapPanelActive)
             {
-                AllPanelActiveFalse();
+                MapPanelOff();
+                BasePanelOff();
             }
             else
             {
-                if (cardsPanel.activeSelf)
-                {
-                    cardsPanel.SetActive(false);
-                }
-                if (settingPanel.activeSelf)
-                {
-                    settingPanel.SetActive(false);
-                }
-                mapPanel.SetActive(true);
-                buttonPanel.SetActive(true);
-                mapTopAnimator.SetBool("MapActive", true);
-                mapMidAnimator.SetBool("MapActive", true);
-                mapBotAnimator.SetBool("MapActive", true);
+                BasePanelOn();
+                MapPanelOn();
+                CardListPanelOff();
+                SettingPanelOff();            
 
                 // 선택 가능 노드들 애니메이션 활성화
                 List<StageNode> nodes = CreateMap.createMapInstance.GetStageNodeList();
@@ -118,53 +116,40 @@ namespace keastmin
                     node.animator.SetBool("IsActive", true);
                 }
 
-                // 스크롤 뷰의 시작 위치 설정
-                int currFloor = CreateMap.createMapInstance.GetStageNodeFloor();
-                Vector2 newPos = _scrollViewContent.anchoredPosition;
-                newPos.y = _startHeight - (currFloor * _floorHeight);
-                _scrollViewContent.anchoredPosition = newPos;
+                // 지도를 펼칠 때 시작 스크롤 설정
+                MapScrollFindActiveNode();
             }
         }
 
         public void OnClickCardListPanel()
         {
-            UIPanelActiveTrue();
             if (cardsPanel.activeSelf)
             {
-                AllPanelActiveFalse();
+                CardListPanelOff();
+                BasePanelOff();
             }
             else
             {
-                if (mapPanel.activeSelf)
-                {
-                    mapPanel.SetActive(false);
-                }
-                if (settingPanel.activeSelf)
-                {
-                    settingPanel.SetActive(false);
-                }
-                cardsPanel.SetActive(true);
+                BasePanelOn();
+                MapPanelOff();
+                CardListPanelOn();
+                SettingPanelOff();
             }
         }
 
         public void OnClickSettingPanel()
         {
-            UIPanelActiveTrue();
             if (settingPanel.activeSelf)
             {
-                AllPanelActiveFalse();
+                SettingPanelOff();
+                BasePanelOff();
             }
             else
             {
-                if (mapPanel.activeSelf)
-                {
-                    mapPanel.SetActive(false);
-                }
-                if (cardsPanel.activeSelf)
-                {
-                    cardsPanel.SetActive(false);
-                }
-                settingPanel.SetActive(true);
+                BasePanelOn();
+                MapPanelOff();
+                CardListPanelOff();
+                SettingPanelOn();
             }
         }
 
@@ -173,57 +158,116 @@ namespace keastmin
 
         #region private 매서드
 
-        private void UIPanelActiveTrue()
+        private void BasePanelOn()
         {
-            if (!uiPanel.activeSelf)
+            if (!_isMapPanelActive && !_isCardsPanelActive && !_isSettingPanelActive)
             {
-                uiPanel.SetActive(true);
-                uiPanelAnimator.SetBool("IsActive", true);
+                _isBasePanelActive = true;
+                basePanel.SetActive(true);
+                if (_basePanelCoroutine != null)
+                {
+                    StopCoroutine(_basePanelCoroutine);
+                }
+                _basePanelCoroutine = StartCoroutine(FadeIn(_basePanelCanvasGroup, 0.5f));
             }
         }
 
-        private void UIPanelActiveFalse()
+        private void BasePanelOff()
         {
-            if (uiPanel.activeSelf)
+            _isBasePanelActive = false;
+            if(_basePanelCoroutine != null)
             {
-                uiPanelAnimator.SetBool("IsActive", false);
-                uiPanel.SetActive(false);
+                StopCoroutine(_basePanelCoroutine);
             }
+            _basePanelCoroutine = StartCoroutine(FadeOut(_basePanelCanvasGroup, 0.3f, () => basePanel.SetActive(false)));
+        }
+
+        private void MapPanelOn()
+        {
+            _isMapPanelActive = true;
+            mapPanel.SetActive(true);
+            buttonPanel.SetActive(true);
+            if(_mapPanelCoroutine != null)
+            {
+                StopCoroutine(_mapPanelCoroutine);
+            }
+            _mapPanelCoroutine = StartCoroutine(FadeIn(_mapPanelCanvasGroup, 0.2f));
+        }
+
+        private void MapPanelOff()
+        {
+            _isMapPanelActive = false;
+            buttonPanel.SetActive(false);
+            if(_mapPanelCoroutine != null)
+            {
+                StopCoroutine(_mapPanelCoroutine);
+            }
+            _mapPanelCoroutine = StartCoroutine(FadeOut(_mapPanelCanvasGroup, 0.2f, () => mapPanel.SetActive(false)));           
+        }
+
+        private IEnumerator FadeOut(CanvasGroup canvasGroup, float duration, System.Action onComplete = null)
+        {
+            float startAlpha = canvasGroup.alpha;
+            float time = 0;
+
+            while(time < duration)
+            {
+                time += Time.deltaTime;
+                canvasGroup.alpha = Mathf.Lerp(startAlpha, 0, time / duration);
+                yield return null;
+            }
+
+            canvasGroup.alpha = 0;
+            onComplete?.Invoke();
+        }
+
+        private IEnumerator FadeIn(CanvasGroup canvasGroup, float duration)
+        {
+            float startAlpha = canvasGroup.alpha;
+            float time = 0;
+
+            while(time < duration)
+            {
+                time += Time.deltaTime;
+                canvasGroup.alpha = Mathf.Lerp(startAlpha, 1, time / duration);
+                yield return null; 
+            }
+
+            canvasGroup.alpha = 1;
+        }
+
+        private void CardListPanelOn()
+        {
+            _isCardsPanelActive = true;
+            cardsPanel.SetActive(true);
+        }
+
+        private void CardListPanelOff()
+        {
+            _isCardsPanelActive = false;
+            cardsPanel.SetActive(false);
+        }
+
+        private void SettingPanelOn()
+        {
+            _isSettingPanelActive = true;
+            settingPanel.SetActive(true);
+        }
+
+        private void SettingPanelOff()
+        {
+            _isSettingPanelActive = false;
+            settingPanel.SetActive(false);
         }
 
         public void AllPanelActiveFalse()
         {
-            if (!mapPanel.activeSelf)
-            {
-                mapPanel.SetActive(true);
-            }
-            if (mapPanel.activeSelf)
-            {
-                buttonPanel.SetActive(false);
-                mapTopAnimator.SetBool("MapActive", false);
-                mapMidAnimator.SetBool("MapActive", false);
-                mapBotAnimator.SetBool("MapActive", false);
-                mapPanel.SetActive(false);
-            }
-
-            if (!cardsPanel.activeSelf)
-            {
-                cardsPanel.SetActive(true);
-            }
-            if (cardsPanel.activeSelf)
-            {
-                cardsPanel.SetActive(false);
-            }
-
-            if (!settingPanel.activeSelf)
-            {
-                settingPanel.SetActive(true);
-            }
-            if (settingPanel.activeSelf)
-            {
-                settingPanel.SetActive(false);
-            }
-            UIPanelActiveFalse();
+            _mapPanelCanvasGroup.alpha = 0;
+            _basePanelCanvasGroup.alpha = 0;
+            basePanel.SetActive(false);
+            mapPanel.SetActive(false);
+            cardsPanel.SetActive(false);
+            settingPanel.SetActive(false);
         }
 
         // 타이머 함수
@@ -246,6 +290,24 @@ namespace keastmin
                 _time[0] += 1;
             }
             timerText.text = _time[0].ToString() + ":" + _time[1].ToString() + ":" + _time[2].ToString();
+        }
+
+        private void UpdateCanvasRayout()
+        {
+            Canvas.ForceUpdateCanvases();
+            foreach (RectTransform root in uiRoot)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(root);
+            }
+        }
+
+        // 스크롤 뷰의 시작 위치 설정
+        private void MapScrollFindActiveNode()
+        {
+            int currFloor = CreateMap.createMapInstance.GetStageNodeFloor();
+            Vector2 newPos = _scrollViewContent.anchoredPosition;
+            newPos.y = _startHeight - (currFloor * _floorHeight);
+            _scrollViewContent.anchoredPosition = newPos;
         }
 
         #endregion
