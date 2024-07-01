@@ -375,7 +375,6 @@ GameObject:
   - component: {fileID: 308284874}
   - component: {fileID: 308284876}
   - component: {fileID: 308284875}
-  - component: {fileID: 308284877}
   m_Layer: 5
   m_Name: Map Mid Image
   m_TagString: Untagged
@@ -440,27 +439,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 308284873}
   m_CullTransparentMesh: 1
---- !u!95 &308284877
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 308284873}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7f58ba8f4bd26994081f2090dd162b95, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &318484153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,7 +986,6 @@ GameObject:
   - component: {fileID: 585667397}
   - component: {fileID: 585667399}
   - component: {fileID: 585667398}
-  - component: {fileID: 585667400}
   m_Layer: 5
   m_Name: Map Bot Image
   m_TagString: Untagged
@@ -1073,27 +1050,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585667396}
   m_CullTransparentMesh: 1
---- !u!95 &585667400
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585667396}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7f58ba8f4bd26994081f2090dd162b95, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &622950803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,7 +1896,6 @@ GameObject:
   - component: {fileID: 909035621}
   - component: {fileID: 909035623}
   - component: {fileID: 909035622}
-  - component: {fileID: 909035624}
   m_Layer: 5
   m_Name: Map Top Image
   m_TagString: Untagged
@@ -2005,27 +1960,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 909035620}
   m_CullTransparentMesh: 1
---- !u!95 &909035624
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909035620}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7f58ba8f4bd26994081f2090dd162b95, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &957305572
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,15 +2379,11 @@ MonoBehaviour:
   - {fileID: 1004389016}
   - {fileID: 1649805928}
   - {fileID: 1345340352}
-  mapTopAnimator: {fileID: 909035624}
-  mapMidAnimator: {fileID: 308284877}
-  mapBotAnimator: {fileID: 585667400}
+  basePanel: {fileID: 788242738}
   mapPanel: {fileID: 2036251798}
   buttonPanel: {fileID: 1743735631}
   cardsPanel: {fileID: 371942395}
   settingPanel: {fileID: 1306047965}
-  uiPanel: {fileID: 788242738}
-  uiPanelAnimator: {fileID: 788242743}
   timerText: {fileID: 1516124045}
 --- !u!4 &1005346325
 Transform:
@@ -4326,6 +4256,90 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825274127}
   m_CullTransparentMesh: 1
+--- !u!1 &1912295972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1912295974}
+  - component: {fileID: 1912295973}
+  m_Layer: 0
+  m_Name: Square
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1912295973
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912295972}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 0.5377358, g: 0.45910463, b: 0.45910463, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &1912295974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912295972}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0018, y: 0.0179, z: 0}
+  m_LocalScale: {x: 17.74484, y: 9.976899, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2002475704
 GameObject:
   m_ObjectHideFlags: 0
@@ -4571,6 +4585,7 @@ GameObject:
   - component: {fileID: 2036251799}
   - component: {fileID: 2036251802}
   - component: {fileID: 2036251800}
+  - component: {fileID: 2036251803}
   m_Layer: 5
   m_Name: Map Scroll View
   m_TagString: Untagged
@@ -4636,6 +4651,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036251798}
   m_CullTransparentMesh: 1
+--- !u!225 &2036251803
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036251798}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!1 &2036503112
 GameObject:
   m_ObjectHideFlags: 0
@@ -4806,3 +4833,4 @@ SceneRoots:
   - {fileID: 1005346325}
   - {fileID: 1206423115}
   - {fileID: 1094956530}
+  - {fileID: 1912295974}
