@@ -78,7 +78,7 @@ namespace keastmin
         {
             if (this.floor >= 0)
             {
-                Button _button = gameObject.GetComponent<Button>();
+                Button _button = GetComponent<Button>();
                 if (_selectEnable)
                 {
                     animator.SetBool("IsActive", true);

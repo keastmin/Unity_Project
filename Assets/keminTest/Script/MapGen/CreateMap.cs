@@ -59,6 +59,7 @@ namespace keastmin
             CreatePathNode();
             StartNodeActivation();
             CreatePathLine();
+            NodeButtonSetLastSibling();
             UIManager.uiManagerInstance.AllPanelActiveFalse();
         }
 
@@ -525,6 +526,21 @@ namespace keastmin
                 rectTransform.localPosition = pos;
                 rectTransform.localRotation = rotation;
                 rectTransform.localScale = Vector2.one;
+            }
+        }
+
+        private void NodeButtonSetLastSibling()
+        {
+            for(int x = 0; x < col; x++)
+            {
+                for(int y = 0; y < row; y++)
+                {
+                    if (stageNodeGrid[x, y] != null)
+                    {
+                        Button _button = stageNodeGrid[x, y].GetComponent<Button>();
+                        _button.transform.SetAsLastSibling();
+                    }
+                }
             }
         }
 
