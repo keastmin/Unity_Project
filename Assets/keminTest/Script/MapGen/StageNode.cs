@@ -66,28 +66,100 @@ namespace keastmin
             }
         }
 
+        public Button _button;
+        private Coroutine _scaleCoroutine;
+        private Vector2 _originScale;
+        private Vector2 _targetScale;
+        [SerializeField] private float _multiScale = 1.6f;
+        [SerializeField] private float _scaleDuration = 1.0f;
+
         #endregion
 
 
         private void Start()
         {
-            UpdateNodeSprite();
+            _button = GetComponent<Button>();
+            if (_button != null)
+            {
+                _originScale = transform.localScale;
+                _targetScale = _originScale * _multiScale;
+                selectEnable = false;
+                UpdateNodeSprite();
+            }
+            else
+            {
+                Debug.LogError("버튼을 찾을 수 없음");
+            }
         }
+
+        private void Update()
+        {
+            if (_button != null)
+            {
+                if (_selectEnable && _scaleCoroutine == null)
+                {
+                    _scaleCoroutine = StartCoroutine(DynamicButtonScale());
+                }
+                else if (!_selectEnable && _scaleCoroutine != null)
+                {
+                    StopCoroutine(_scaleCoroutine);
+                    _scaleCoroutine = null;
+                    transform.localScale = _originScale;
+                }
+            }
+        }
+
+        #region 코루틴 메서드
+
+        private IEnumerator DynamicButtonScale()
+        {
+            while (_selectEnable)
+            {
+                yield return StartCoroutine(ScaleTo(_targetScale));
+
+                yield return StartCoroutine(ScaleTo(_originScale));
+            }
+
+            transform.localScale = _originScale;
+        }
+
+        private IEnumerator ScaleTo(Vector2 scale)
+        {
+            Vector2 startScale = transform.localScale;
+            float time = 0;
+
+            while(time < _scaleDuration)
+            {
+                if (!_selectEnable)
+                {
+                    transform.localScale = _originScale;
+                    yield break;
+                }
+
+                transform.localScale = Vector2.Lerp(startScale, scale, time / _scaleDuration);
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.localScale = scale;
+        }
+
+        #endregion
 
         void UpdateNodeActivation()
         {
             if (this.floor >= 0)
             {
-                Button _button = GetComponent<Button>();
-                if (_selectEnable)
+                if (_button != null)
                 {
-                    animator.SetBool("IsActive", true);
-                    _button.interactable = true;
+                    _button.interactable = _selectEnable;
+                    Debug.Log(_button);
+                    Debug.Log(_selectEnable);
                 }
                 else
                 {
-                    animator.SetBool("IsActive", false);
-                    _button.interactable = false;
+                    Debug.Log(x + " " + floor);
+                    Debug.LogError("버튼을 찾을 수 없음");
                 }
             }
         }
@@ -101,13 +173,14 @@ namespace keastmin
             }
         }
 
-        public void InitNode(int x, int floor, bool select)
+        public void InitNode(int x, int floor)
         {
+            if (_button == null) _button = GetComponent<Button>();
             this.x = x;
             this.floor = floor;
-            this.selectEnable = false;
             this.nextNode = new List<StageNode>();
             this.prevNode = new List<StageNode>();
+            if (floor == 0) selectEnable = true;
         }
 
         public void OnClickNextStageInfo()

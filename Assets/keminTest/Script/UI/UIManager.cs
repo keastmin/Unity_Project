@@ -109,12 +109,12 @@ namespace keastmin
                 CardListPanelOff();
                 SettingPanelOff();            
 
-                // 선택 가능 노드들 애니메이션 활성화
-                List<StageNode> nodes = CreateMap.createMapInstance.GetStageNodeList();
-                foreach (StageNode node in nodes)
-                {
-                    node.animator.SetBool("IsActive", true);
-                }
+                //// 선택 가능 노드들 애니메이션 활성화
+                //List<StageNode> nodes = CreateMap.createMapInstance.GetStageNodeList();
+                //foreach (StageNode node in nodes)
+                //{
+                //    node.animator.SetBool("IsActive", true);
+                //}
 
                 // 지도를 펼칠 때 시작 스크롤 설정
                 MapScrollFindActiveNode();
