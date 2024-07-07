@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -60,16 +58,6 @@ namespace keastmin
 
             // 버튼의 활성화 여부 false
             isActive = false;
-        }
-
-        void Start()
-        {
-            
-        }
-
-        void Update()
-        {
-
         }
 
         // 노드 활성화마다 애니메이션 실행

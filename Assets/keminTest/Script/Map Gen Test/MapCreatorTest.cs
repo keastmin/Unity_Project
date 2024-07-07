@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +9,9 @@ namespace keastmin
     public class MapCreatorTest : MonoBehaviour
     {
         #region public 변수
-        
+
+        public static MapCreatorTest instance;
+
         public Transform stagePanel; // 버튼이 생성될 패널      
         public Button stageButton; // 버튼 프리팹     
         public RawImage lineImage; // 버튼 사이의 라인 프리팹
@@ -34,6 +34,11 @@ namespace keastmin
 
 
         #region MonoBehaviour 메서드
+
+        private void Awake()
+        {
+            instance = this;
+        }
 
         void Start()
         {
@@ -343,19 +348,25 @@ namespace keastmin
                     // 노드가 고정되어 있는 층은 무시
                     if (y == 0 || y == 8 || y == 14) continue;
 
-                    // 노드 검사 과정
-                    bool check = Rule_1_Check(x, y);
-
-
-                    // 노드 변환 과정
-                    if (check)
+                    // 노드 검사 및 변환 과정
+                    if (Rule_Check(x, y))
                     {
                         Rule_1_Compliance(y, changeTypeHash);
+                        Rule_2_Compliance(x, y, changeTypeHash);
+                        Rule_3_Compliance(x, y, changeTypeHash);
                     }
 
-                    if(changeTypeHash.Count > 0)
+                    // 랜덤으로 선택 가능한 모든 노드가 변환 목록에 포함되어 있다면 모든 노드 타입 재설정
+                    if(changeTypeHash.Count >= 5)
                     {
-                        changeNode(x, y, changeTypeHash);
+                        Debug.Log("경로 무결성 검사 실패로 맵 재구축");
+                        ChangeAllNodeType();
+                        NodeEdit();
+                        return;
+                    }
+                    else if(changeTypeHash.Count > 0)
+                    {
+                        ChangeNode(x, y, changeTypeHash);
                     }
                 }
             }
@@ -378,6 +389,14 @@ namespace keastmin
             }
         }
 
+        bool Rule_Check(int x, int y)
+        {
+            if (Rule_1_Check(x, y)) return true;
+            if (Rule_2_Check(x, y)) return true;
+            if (Rule_3_Check(x, y)) return true;
+            return false;
+        }
+
         // 5층 미만 노드는 엘리트와 휴식일 수 없다.
         bool Rule_1_Check(int x, int y)
         {
@@ -385,6 +404,42 @@ namespace keastmin
             if ((currType == NodeType.Elite || currType == NodeType.Rest) && y < 5)
             {
                 return true;
+            }
+            return false;
+        }
+
+        // 엘리트, 상점, 휴식은 연속될 수 없다.
+        bool Rule_2_Check(int x, int y)
+        {
+            NodeType currType = stageNodeGrid[x, y].nodeType;
+            if(currType == NodeType.Elite || currType == NodeType.Rest || currType == NodeType.Merchant)
+            {
+                foreach(StageNodeTest prev in stageNodeGrid[x, y].prevNode)
+                {
+                    if (prev.nodeType == currType) return true;
+                }
+                foreach (StageNodeTest next in stageNodeGrid[x, y].nextNode)
+                {
+                    if (next.nodeType == currType) return true;
+                }
+            }
+            return false;
+        }
+
+        // 2개 이상의 다음 경로가 있을 경우 무조건 2개 이상의 노드 타입이 존재해야한다.
+        bool Rule_3_Check(int x, int y)
+        {
+            foreach (StageNodeTest prev in stageNodeGrid[x, y].prevNode)
+            {
+                if (prev.nextNode.Count > 1)
+                {
+                    HashSet<NodeType> checkTypesCount = new HashSet<NodeType>();
+                    foreach(StageNodeTest next in prev.nextNode)
+                    {
+                        checkTypesCount.Add(next.nodeType);
+                    }
+                    if (checkTypesCount.Count <= 1) return true;
+                }
             }
             return false;
         }
@@ -398,7 +453,57 @@ namespace keastmin
             }
         }
 
-        void changeNode(int x, int y, HashSet<NodeType> hash)
+        void Rule_2_Compliance(int x, int y, HashSet<NodeType> hash)
+        {
+            NodeType[] types = { NodeType.Elite, NodeType.Rest, NodeType.Merchant };
+            foreach(StageNodeTest prev in stageNodeGrid[x, y].prevNode)
+            {
+                for(int i = 0; i < types.Length; i++)
+                {
+                    if (prev.nodeType == types[i]) hash.Add(types[i]);
+                }
+            }
+            foreach (StageNodeTest next in stageNodeGrid[x, y].nextNode)
+            {
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (next.nodeType == types[i]) hash.Add(types[i]);
+                }
+            }
+        }
+
+        void Rule_3_Compliance(int x, int y, HashSet<NodeType> hash)
+        {
+            foreach(StageNodeTest prev in stageNodeGrid[x, y].prevNode)
+            {
+                if(prev.nextNode.Count > 1)
+                {
+                    HashSet<NodeType> typeCountHash = new HashSet<NodeType>();
+                    foreach(StageNodeTest next in prev.nextNode)
+                    {
+                        if (next != stageNodeGrid[x, y]) typeCountHash.Add(next.nodeType);
+                    }
+
+                    if (typeCountHash.Count == 1) hash.Add(typeCountHash.First());
+                }
+            }
+        }
+
+        void ChangeAllNodeType()
+        {
+            for(int x = 0; x < col; x++)
+            {
+                for(int y = 0; y < row; y++)
+                {
+                    if (stageNodeGrid[x, y] != null)
+                    {
+                        stageNodeGrid[x, y].nodeType = NodeTypeManager.instance.GetRandomNodeType();
+                    }
+                }
+            }
+        }
+
+        void ChangeNode(int x, int y, HashSet<NodeType> hash)
         {
             NodeType currNode = stageNodeGrid[x, y].nodeType;
             while (hash.Contains(currNode))
@@ -406,6 +511,28 @@ namespace keastmin
                 currNode = NodeTypeManager.instance.GetRandomNodeType();
             }
             stageNodeGrid[x, y].nodeType = currNode;
+        }
+
+        #endregion
+
+
+        #region 인스턴스 반환 메서드
+         
+
+        // StartScrollSet에서 현재 활성화된 층 수를 반환하는데 사용되는 메서드
+        public int GetMapScrollStartPos()
+        {
+            for(int y = 0; y < row; ++y)
+            {
+                for(int x = 0; x < col; ++x)
+                {
+                    if (stageNodeGrid[x, y] != null && stageNodeGrid[x, y].isActive)
+                    {
+                        return y;
+                    }
+                }
+            }
+            return 0;
         }
 
         #endregion

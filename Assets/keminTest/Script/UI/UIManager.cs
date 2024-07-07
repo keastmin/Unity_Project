@@ -30,13 +30,6 @@ namespace keastmin
 
         #region private 변수
 
-        // 스크롤뷰의 컨텐츠 오브젝트의 시작 위치를 조절하기 위한 변수
-        private RectTransform _scrollViewContent;
-
-        // 스크롤의 시작 위치와 층이 올라갈 때마다 증가할 위치 값
-        private int _startHeight = 450;
-        private int _floorHeight = 80;
-
         // Hour, Minute, Second
         private int[] _time = new int[3];
 
@@ -68,8 +61,8 @@ namespace keastmin
             uiManagerInstance = this;
             _basePanelCanvasGroup = basePanel.GetComponent<CanvasGroup>();
             _mapPanelCanvasGroup = mapPanel.GetComponent<CanvasGroup>();
-            _scrollViewContent = mapPanel.GetComponent<ScrollRect>().content;
             UpdateCanvasRayout(); // 캔버스의 UI 요소 중 실행 시 정상적이지 않은 UI 강제 업데이트
+            AllPanelActiveFalse();
         }
 
         void Update()
@@ -108,16 +101,6 @@ namespace keastmin
                 MapPanelOn();
                 CardListPanelOff();
                 SettingPanelOff();            
-
-                //// 선택 가능 노드들 애니메이션 활성화
-                //List<StageNode> nodes = CreateMap.createMapInstance.GetStageNodeList();
-                //foreach (StageNode node in nodes)
-                //{
-                //    node.animator.SetBool("IsActive", true);
-                //}
-
-                // 지도를 펼칠 때 시작 스크롤 설정
-                MapScrollFindActiveNode();
             }
         }
 
@@ -299,15 +282,6 @@ namespace keastmin
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(root);
             }
-        }
-
-        // 스크롤 뷰의 시작 위치 설정
-        private void MapScrollFindActiveNode()
-        {
-            int currFloor = CreateMap.createMapInstance.GetStageNodeFloor();
-            Vector2 newPos = _scrollViewContent.anchoredPosition;
-            newPos.y = _startHeight - (currFloor * _floorHeight);
-            _scrollViewContent.anchoredPosition = newPos;
         }
 
         #endregion
