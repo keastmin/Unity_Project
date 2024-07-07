@@ -11,7 +11,7 @@ namespace keastmin
         private int _startHeight = 450;
         private int _floorHeight = 80;
 
-        private void Start()
+        private void Awake()
         {
             _scrollViewContent = GetComponent<RectTransform>();
         }
