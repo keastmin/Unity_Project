@@ -55,12 +55,12 @@ namespace keastmin
             }
 
             startNodesPrev = startNodesObject.GetComponent<StageNode>();
-            startNodesPrev.InitNode(-1, -1, false);
+            startNodesPrev.InitNode(-1, -1);
             CreatePathNode();
             StartNodeActivation();
             CreatePathLine();
             NodeButtonSetLastSibling();
-            UIManager.uiManagerInstance.AllPanelActiveFalse();
+            //UIManager.uiManagerInstance.AllPanelActiveFalse();
         }
 
         #endregion
@@ -233,7 +233,7 @@ namespace keastmin
 
             StageNode node = _button.GetComponent<StageNode>();
             node.nodeType = NodePreset.GetRandomNodeType(y);
-            node.InitNode(x, y, false);
+            node.InitNode(x, y);
             stageNodeGrid[x, y] = node;
 
             return node;
@@ -449,31 +449,37 @@ namespace keastmin
         // 시작 지점을 제외하고 나머지 모두 비활성
         void StartNodeActivation()
         {
+            Debug.Log("이전");
+
             for(int x = 0; x < col; x++)
             {
                 if (stageNodeGrid[x, 0] != null)
                 {
                     stageNodeGrid[x, 0].prevNode.Add(startNodesPrev);
                     startNodesPrev.nextNode.Add(stageNodeGrid[x, 0]);
+                    //stageNodeGrid[x, 0].selectEnable = true;
                 }
             }
 
-            Queue<StageNode> q = new Queue<StageNode>();
-            bool[,] visited = new bool[col, row];
-            q.Enqueue(startNodesPrev);
-            while(q.Count > 0)
-            {
-                StageNode node = q.Dequeue();
-                if (node.floor == 0) node.selectEnable = true;
-                else if (node.floor > 0) node.selectEnable = false;
-                foreach(StageNode next in node.nextNode)
-                {
-                    if (!visited[next.x, next.floor])
-                    {
-                        q.Enqueue(next);
-                    }
-                }
-            }
+            Debug.Log("이후");
+
+
+            //Queue<StageNode> q = new Queue<StageNode>();
+            //bool[,] visited = new bool[col, row];
+            //q.Enqueue(startNodesPrev);
+            //while(q.Count > 0)
+            //{
+            //    StageNode node = q.Dequeue();
+            //    if (node.floor == 0) node.selectEnable = true;
+            //    else if (node.floor > 0) node.selectEnable = false;
+            //    foreach(StageNode next in node.nextNode)
+            //    {
+            //        if (!visited[next.x, next.floor])
+            //        {
+            //            q.Enqueue(next);
+            //        }
+            //    }
+            //}
         }
 
         void CreatePathLine()
