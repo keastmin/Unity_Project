@@ -47,6 +47,7 @@ namespace keastmin
             DrawPathLine();
             CreateButton();
             NodeEdit();
+            UIManager.instance.AllPanelActiveFalse();
         }
 
         #endregion
@@ -522,13 +523,16 @@ namespace keastmin
         // StartScrollSet에서 현재 활성화된 층 수를 반환하는데 사용되는 메서드
         public int GetMapScrollStartPos()
         {
-            for(int y = 0; y < row; ++y)
+            if (stageNodeGrid != null)
             {
-                for(int x = 0; x < col; ++x)
+                for (int y = 0; y < row; ++y)
                 {
-                    if (stageNodeGrid[x, y] != null && stageNodeGrid[x, y].isActive)
+                    for (int x = 0; x < col; ++x)
                     {
-                        return y;
+                        if (stageNodeGrid[x, y] != null && stageNodeGrid[x, y].isActive)
+                        {
+                            return y;
+                        }
                     }
                 }
             }

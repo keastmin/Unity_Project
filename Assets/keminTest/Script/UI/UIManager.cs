@@ -13,7 +13,7 @@ namespace keastmin
         #region public 변수
 
         // Map을 생성한 후 UI의 상태를 초기화 하기 위한 인스턴스
-        public static UIManager uiManagerInstance;
+        public static UIManager instance;
 
         // 씬 이동 시 상단 패널을 초기화 할 변수 리스트
         public List<RectTransform> uiRoot; // 상단 UI 리스트
@@ -56,13 +56,16 @@ namespace keastmin
 
         #region MonoBehaviou 메서드
 
+        private void Awake()
+        {
+            instance = this;
+        }
+
         void Start()
         {
-            uiManagerInstance = this;
             _basePanelCanvasGroup = basePanel.GetComponent<CanvasGroup>();
             _mapPanelCanvasGroup = mapPanel.GetComponent<CanvasGroup>();
             UpdateCanvasRayout(); // 캔버스의 UI 요소 중 실행 시 정상적이지 않은 UI 강제 업데이트
-            AllPanelActiveFalse();
         }
 
         void Update()
