@@ -521,7 +521,7 @@ namespace keastmin
          
 
         // StartScrollSet에서 현재 활성화된 층 수를 반환하는데 사용되는 메서드
-        public int GetMapScrollStartPos()
+        public int GetCurrentActiveFloor()
         {
             if (stageNodeGrid != null)
             {

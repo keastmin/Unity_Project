@@ -20,7 +20,7 @@ namespace keastmin
         {
             if (MapCreatorTest.instance != null)
             {
-                int currFloor = MapCreatorTest.instance.GetMapScrollStartPos();
+                int currFloor = MapCreatorTest.instance.GetCurrentActiveFloor();
                 Vector2 newPos = _scrollViewContent.anchoredPosition;
                 newPos.y = _startHeight - (currFloor * _floorHeight);
                 _scrollViewContent.anchoredPosition = newPos;

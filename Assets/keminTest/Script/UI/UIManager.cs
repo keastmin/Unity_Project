@@ -30,13 +30,6 @@ namespace keastmin
 
         #region private 변수
 
-        // Hour, Minute, Second
-        private int[] _time = new int[3];
-
-        private float miliSecond = 0f;
-
-        [SerializeField] private TextMeshProUGUI timerText;
-
         // UI의 FadeIn, FadeOut을 담당할 캔버스 그룹
         private CanvasGroup _basePanelCanvasGroup;
         private CanvasGroup _mapPanelCanvasGroup;
@@ -70,8 +63,6 @@ namespace keastmin
 
         void Update()
         {
-            SetTimer();
-
             if (Input.GetKeyDown(KeyCode.M))
             {
                 OnClickMapButton();
@@ -254,28 +245,6 @@ namespace keastmin
             mapPanel.SetActive(false);
             cardsPanel.SetActive(false);
             settingPanel.SetActive(false);
-        }
-
-        // 타이머 함수
-        void SetTimer()
-        {
-            miliSecond += Time.deltaTime;
-            if (miliSecond >= 1)
-            {
-                miliSecond = 0f;
-                _time[2] += 1;
-            }
-            if (_time[2] >= 60)
-            {
-                _time[2] = 0;
-                _time[1] += 1;
-            }
-            if (_time[1] >= 60)
-            {
-                _time[1] = 0;
-                _time[0] += 1;
-            }
-            timerText.text = _time[0].ToString() + ":" + _time[1].ToString() + ":" + _time[2].ToString();
         }
 
         private void UpdateCanvasRayout()
